@@ -1,7 +1,7 @@
 {
-  "name": "phaser-template",
-  "version": "1.0.0",
-  "description": "Template to build a game with phaser 3",
+  "name": "are-you",
+  "version": "0.0.1",
+  "description": "Game with phaser 3",
   "main": "index.html",
   "scripts": {
     "build": "cross-env NODE_ENV=production webpack",
@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/pixel-fabian/phaser-blueprint.git"
+    "url": "git+https://github.com/pixel-fabian/are-you.git"
   },
   "keywords": [
     "phaser",
@@ -22,9 +22,9 @@
   "author": "pixel-fabian",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/pixel-fabian/phaser-blueprint/issues"
+    "url": "https://github.com/pixel-fabian/are-you/issues"
   },
-  "homepage": "https://github.com/pixel-fabian/phaser-blueprint#readme",
+  "homepage": "https://github.com/pixel-fabian/are-you#readme",
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^4.22.0",
     "@typescript-eslint/parser": "^4.22.0",
