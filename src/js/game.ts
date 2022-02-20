@@ -5,14 +5,23 @@ import SceneGame from './scenes/sceneGame';
 
 const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO, // WebGL if available
-  title: 'Blueprint',
+  title: 'Are You?',
   width: 800,
   height: 600,
   parent: 'game',
   scene: [SceneLoad, SceneMenu, SceneGame],
   render: {
-    pixelArt: true
-  }
+    pixelArt: true,
+  },
+  physics: {
+    default: 'arcade',
+    arcade: {
+      debug: false,
+      gravity: {
+        y: 0,
+      },
+    },
+  },
 };
 
 window.onload = () => {

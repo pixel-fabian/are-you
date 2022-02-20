@@ -16,19 +16,27 @@ export default class SceneLoad extends Phaser.Scene {
 
   preload(): void {
     // load all textures
-    this.load.spritesheet(TEXTURES.BUTTON_PLAY, "assets/button_01_play.png", {
+    this.load.spritesheet(TEXTURES.BUTTON_PLAY, 'assets/button_01_play.png', {
       frameWidth: 64,
       frameHeight: 32,
     });
+    this.load.spritesheet(
+      TEXTURES.UNKNOWN,
+      'assets/sprites/spr_pixelhaufen.png',
+      {
+        frameWidth: 32,
+        frameHeight: 32,
+      },
+    );
 
     // create loading bar
     const loadingBar = this.add.graphics({
       fillStyle: {
-        color: 0xffffff
-      }
+        color: 0xffffff,
+      },
     });
-    this.load.on("progress", (nPercentage) => {
-      loadingBar.fillRect(30, 300, 740*nPercentage, 40);
+    this.load.on('progress', (nPercentage) => {
+      loadingBar.fillRect(30, 300, 740 * nPercentage, 40);
     });
   }
 
