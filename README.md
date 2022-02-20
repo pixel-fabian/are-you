@@ -7,3 +7,5 @@
 ---
 
 A small game created during [Brackeys Game Jam 2022.1](https://itch.io/jam/brackeys-7)
+
+- controls: WASD

@@ -28,6 +28,7 @@ export default class SceneLoad extends Phaser.Scene {
         frameHeight: 32,
       },
     );
+    this.load.image(TEXTURES.FLOOR, 'assets/sprites/spr_floor.png');
 
     // create loading bar
     const loadingBar = this.add.graphics({

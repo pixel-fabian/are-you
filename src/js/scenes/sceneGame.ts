@@ -25,7 +25,9 @@ export default class SceneGame extends Phaser.Scene {
   preload(): void {}
 
   create(): void {
-    this.player = this.physics.add.sprite(32, 32, TEXTURES.UNKNOWN, 0);
+    this._createFloor();
+    const { x, y } = this._createRandomCoords();
+    this.player = this.physics.add.sprite(x, y, TEXTURES.UNKNOWN, 0);
     this._createAnimations();
     this._createControls();
     this.player.play('unknown');
@@ -71,5 +73,39 @@ export default class SceneGame extends Phaser.Scene {
       frameRate: 10,
       repeat: -1, // -1: infinity
     });
+  }
+
+  _createRandomCoords() {
+    // width and height of the game screen
+    const width = this.scale.width;
+    const height = this.scale.height;
+
+    const x = Phaser.Math.Between(0, width - 16);
+    const y = Phaser.Math.Between(0, height - 16);
+
+    return { x, y };
+  }
+
+  _createFloor() {
+    const aLevel = [];
+    const nRows = this.scale.height / 32;
+    const nColumns = this.scale.width / 32;
+    // create 2D array with random tile numbers
+    for (let rowIndex = 0; rowIndex < nRows; rowIndex++) {
+      const aRow = [];
+      for (let columnIndex = 0; columnIndex < nColumns; columnIndex++) {
+        const nTile = Phaser.Math.Between(0, 3);
+        aRow.push(nTile);
+      }
+      aLevel.push(aRow);
+    }
+    // When loading from an array, make sure to specify the tileWidth and tileHeight
+    const map = this.make.tilemap({
+      data: aLevel,
+      tileWidth: 32,
+      tileHeight: 32,
+    });
+    const tiles = map.addTilesetImage(TEXTURES.FLOOR);
+    map.createLayer(0, tiles, 0, 0);
   }
 }
