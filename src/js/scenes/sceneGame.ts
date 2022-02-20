@@ -8,6 +8,7 @@ export default class SceneGame extends Phaser.Scene {
   private keyD: Phaser.Input.Keyboard.Key;
   private player?;
   private velocity = 100;
+  private floorHoles?;
   private enemies: Phaser.Physics.Arcade.Group;
 
   constructor() {
@@ -26,12 +27,20 @@ export default class SceneGame extends Phaser.Scene {
 
   create(): void {
     this._createFloor();
-    const { x, y } = this._createRandomCoords();
-    this.player = this.physics.add.sprite(x, y, TEXTURES.UNKNOWN, 0);
     this._createAnimations();
     this._createControls();
+    this._spawnHoles();
+
+    const { x, y } = this._createRandomCoords();
+    this.player = this.physics.add.sprite(x, y, TEXTURES.UNKNOWN, 0);
     this.player.play('unknown');
     this.player.setCollideWorldBounds(true);
+
+    this.physics.add.collider(
+      this.player,
+      this.floorHoles,
+      this._onCollidePlayerHoles,
+    );
   }
 
   update(): void {
@@ -107,5 +116,18 @@ export default class SceneGame extends Phaser.Scene {
     });
     const tiles = map.addTilesetImage(TEXTURES.FLOOR);
     map.createLayer(0, tiles, 0, 0);
+  }
+
+  _spawnHoles() {
+    this.floorHoles = this.physics.add.group();
+    const nNumberHoles = Phaser.Math.Between(5, 12);
+    for (let nHole = 0; nHole < nNumberHoles; nHole++) {
+      const { x, y } = this._createRandomCoords();
+      this.floorHoles.create(x, y, TEXTURES.UNKNOWN, 0).play('unknown');
+    }
+  }
+
+  _onCollidePlayerHoles() {
+    console.log(this);
   }
 }
