@@ -1,0 +1,23 @@
+# logs
+logs
+*.log
+npm-debug.log*
+
+# runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# node
+node_modules/
+.npm
+package-lock.json
+
+# generated output
+dist/js
+docs
+
+# system Files
+.DS_Store
+Thumbs.db

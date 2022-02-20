@@ -1,0 +1,42 @@
+{
+  "name": "phaser-template",
+  "version": "1.0.0",
+  "description": "Template to build a game with phaser 3",
+  "main": "index.html",
+  "scripts": {
+    "build": "cross-env NODE_ENV=production webpack",
+    "start": "webpack --watch --progress",
+    "lint": "eslint ./src --ext .ts && prettier --check --ignore-path .gitignore ./src/",
+    "lint:fix": "eslint ./src/**/*.ts --fix && prettier --ignore-path .gitignore --write ./src/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pixel-fabian/phaser-blueprint.git"
+  },
+  "keywords": [
+    "phaser",
+    "javascript",
+    "typescript",
+    "html5-game"
+  ],
+  "author": "pixel-fabian",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/pixel-fabian/phaser-blueprint/issues"
+  },
+  "homepage": "https://github.com/pixel-fabian/phaser-blueprint#readme",
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^4.22.0",
+    "@typescript-eslint/parser": "^4.22.0",
+    "cross-env": "^7.0.3",
+    "eslint": "^7.25.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-config-recommended": "^4.1.0",
+    "phaser": "^3.54.0",
+    "prettier": "^2.2.1",
+    "ts-loader": "^9.1.1",
+    "typescript": "^4.2.4",
+    "webpack": "^5.36.2",
+    "webpack-cli": "^4.6.0"
+  }
+}
