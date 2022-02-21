@@ -119,15 +119,67 @@ export default class SceneGame extends Phaser.Scene {
   }
 
   _spawnHoles() {
-    this.floorHoles = this.physics.add.group();
     const nNumberHoles = Phaser.Math.Between(5, 12);
-    for (let nHole = 0; nHole < nNumberHoles; nHole++) {
-      const { x, y } = this._createRandomCoords();
-      this.floorHoles.create(x, y, TEXTURES.UNKNOWN, 0).play('unknown');
-    }
+    this.floorHoles = this.physics.add.group({
+      key: TEXTURES.UNKNOWN,
+      quantity: nNumberHoles,
+      bounceX: 1,
+      bounceY: 1,
+      collideWorldBounds: true,
+    });
+    // spawn randomly
+    Phaser.Actions.RandomRectangle(
+      this.floorHoles.getChildren(),
+      this.physics.world.bounds,
+    );
+    this.floorHoles.getChildren().forEach((hole) => {
+      hole.play('unknown');
+      const { velocityX, velocityY } = this._getRandomDirection();
+      hole.setVelocity(velocityX, velocityY);
+    });
   }
 
   _onCollidePlayerHoles() {
     console.log(this);
+  }
+
+  _changeDirection() {
+    this.floorHoles.getChildren().forEach((hole) => {
+      const { velocityX, velocityY } = this._getRandomDirection();
+      hole.setVelocity(velocityX, velocityY);
+    });
+  }
+
+  _getRandomDirection() {
+    const nDirection = Phaser.Math.Between(0, 8);
+    switch (nDirection) {
+      case 0:
+        // stand still
+        return { velocityX: 0, velocityY: 0 };
+      case 1:
+        // right
+        return { velocityX: this.velocity, velocityY: 0 };
+      case 2:
+        // right-down
+        return { velocityX: this.velocity, velocityY: this.velocity };
+      case 3:
+        // down
+        return { velocityX: 0, velocityY: this.velocity };
+      case 4:
+        // down-left
+        return { velocityX: -this.velocity, velocityY: this.velocity };
+      case 5:
+        // left
+        return { velocityX: -this.velocity, velocityY: 0 };
+      case 6:
+        // left-up
+        return { velocityX: -this.velocity, velocityY: -this.velocity };
+      case 7:
+        // up
+        return { velocityX: 0, velocityY: -this.velocity };
+      case 8:
+        // up-right
+        return { velocityX: this.velocity, velocityY: -this.velocity };
+    }
   }
 }
