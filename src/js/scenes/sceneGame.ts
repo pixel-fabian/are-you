@@ -134,20 +134,24 @@ export default class SceneGame extends Phaser.Scene {
     );
     this.floorHoles.getChildren().forEach((hole) => {
       hole.play('unknown');
+      // move towards random direction
       const { velocityX, velocityY } = this._getRandomDirection();
       hole.setVelocity(velocityX, velocityY);
+      // change direction
+      const nDelay = Phaser.Math.Between(200, 5000);
+      hole.changeDirectionEvent = this.time.addEvent({
+        delay: nDelay,
+        callback: () => {
+          const { velocityX, velocityY } = this._getRandomDirection();
+          hole.setVelocity(velocityX, velocityY);
+        },
+        loop: true,
+      });
     });
   }
 
   _onCollidePlayerHoles() {
     console.log(this);
-  }
-
-  _changeDirection() {
-    this.floorHoles.getChildren().forEach((hole) => {
-      const { velocityX, velocityY } = this._getRandomDirection();
-      hole.setVelocity(velocityX, velocityY);
-    });
   }
 
   _getRandomDirection() {
