@@ -10,7 +10,7 @@ export default class SceneGame extends Phaser.Scene {
   private velocity = 100;
   private floorHoles?;
   private knownElements = {
-    floorHoles: true,
+    floorHoles: false,
     ghosts: false,
     player: false,
   };
@@ -47,11 +47,15 @@ export default class SceneGame extends Phaser.Scene {
     this.player = this.physics.add.sprite(x, y, TEXTURES.UNKNOWN, 0);
     this.player.play('unknown');
     this.player.setCollideWorldBounds(true);
+    this.player.setImmovable(true);
+    this.player.setCircle(14, 2, 2);
 
     this.physics.add.collider(
       this.player,
       this.floorHoles,
-      this._onCollidePlayerHoles,
+      this._onCollisionPlayerHole,
+      null,
+      this,
     );
   }
 
@@ -141,6 +145,7 @@ export default class SceneGame extends Phaser.Scene {
       bounceX: 1,
       bounceY: 1,
       collideWorldBounds: true,
+      immovable: true,
     });
     // spawn randomly
     Phaser.Actions.RandomRectangle(
@@ -150,6 +155,7 @@ export default class SceneGame extends Phaser.Scene {
     // if unkown: Move around
     if (!this.knownElements.floorHoles) {
       this.floorHoles.getChildren().forEach((hole) => {
+        hole.setCircle(14, 2, 2);
         hole.play('unknown');
         // move towards random direction
         const { velocityX, velocityY } = this._getRandomDirection();
@@ -165,11 +171,20 @@ export default class SceneGame extends Phaser.Scene {
           loop: true,
         });
       });
+    } else {
+      this.floorHoles.getChildren().forEach((hole) => {
+        hole.setCircle(14, 2, 2);
+      });
     }
   }
 
-  _onCollidePlayerHoles() {
-    console.log(this);
+  _onCollisionPlayerHole() {
+    if (!this.knownElements.floorHoles) {
+      this.knownElements.floorHoles = true;
+    }
+    this.scene.start(SCENES.GAME, {
+      knownElements: this.knownElements,
+    });
   }
 
   _getRandomDirection() {
