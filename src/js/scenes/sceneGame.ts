@@ -9,7 +9,11 @@ export default class SceneGame extends Phaser.Scene {
   private player?;
   private velocity = 100;
   private floorHoles?;
-  private enemies: Phaser.Physics.Arcade.Group;
+  private knownElements = {
+    floorHoles: true,
+    ghosts: false,
+    player: false,
+  };
 
   constructor() {
     super({
@@ -21,7 +25,15 @@ export default class SceneGame extends Phaser.Scene {
   // LIFECYCLE (init, preload, create, update)    //
   //////////////////////////////////////////////////
 
-  init(): void {}
+  init(data): void {
+    if (data.knownElements) {
+      this.knownElements = Object.assign(
+        {},
+        this.knownElements,
+        data.knownElements,
+      );
+    }
+  }
 
   preload(): void {}
 
@@ -120,8 +132,11 @@ export default class SceneGame extends Phaser.Scene {
 
   _spawnHoles() {
     const nNumberHoles = Phaser.Math.Between(5, 12);
+    const sTextureKey = this.knownElements.floorHoles
+      ? TEXTURES.HOLE
+      : TEXTURES.UNKNOWN;
     this.floorHoles = this.physics.add.group({
-      key: TEXTURES.UNKNOWN,
+      key: sTextureKey,
       quantity: nNumberHoles,
       bounceX: 1,
       bounceY: 1,
@@ -132,22 +147,25 @@ export default class SceneGame extends Phaser.Scene {
       this.floorHoles.getChildren(),
       this.physics.world.bounds,
     );
-    this.floorHoles.getChildren().forEach((hole) => {
-      hole.play('unknown');
-      // move towards random direction
-      const { velocityX, velocityY } = this._getRandomDirection();
-      hole.setVelocity(velocityX, velocityY);
-      // change direction
-      const nDelay = Phaser.Math.Between(200, 5000);
-      hole.changeDirectionEvent = this.time.addEvent({
-        delay: nDelay,
-        callback: () => {
-          const { velocityX, velocityY } = this._getRandomDirection();
-          hole.setVelocity(velocityX, velocityY);
-        },
-        loop: true,
+    // if unkown: Move around
+    if (!this.knownElements.floorHoles) {
+      this.floorHoles.getChildren().forEach((hole) => {
+        hole.play('unknown');
+        // move towards random direction
+        const { velocityX, velocityY } = this._getRandomDirection();
+        hole.setVelocity(velocityX, velocityY);
+        // change direction
+        const nDelay = Phaser.Math.Between(200, 5000);
+        hole.changeDirectionEvent = this.time.addEvent({
+          delay: nDelay,
+          callback: () => {
+            const { velocityX, velocityY } = this._getRandomDirection();
+            hole.setVelocity(velocityX, velocityY);
+          },
+          loop: true,
+        });
       });
-    });
+    }
   }
 
   _onCollidePlayerHoles() {
