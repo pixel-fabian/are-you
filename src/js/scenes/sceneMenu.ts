@@ -20,8 +20,7 @@ export default class SceneMenu extends Phaser.Scene {
   create(): void {
     this._createFloor();
     // add text
-    const screenCenterX =
-      this.cameras.main.worldView.x + this.cameras.main.width / 2;
+    const screenCenterX = this.scale.width / 2;
     this.add
       .text(screenCenterX, 80, 'Are you?', {
         fontFamily: 'BitPotion',

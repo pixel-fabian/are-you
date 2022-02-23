@@ -1,9 +1,9 @@
 /* eslint-disable no-unused-vars */
 enum TEXTURES {
-  BUTTON = 'button',
-  BUTTON_PLAY = 'button_play',
   UNKNOWN = 'pixelheap',
   FLOOR = 'floor',
+  HOLE = 'hole',
+  GHOST = 'ghost',
 }
 
 export default TEXTURES;
