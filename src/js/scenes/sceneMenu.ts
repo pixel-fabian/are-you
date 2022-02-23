@@ -18,7 +18,24 @@ export default class SceneMenu extends Phaser.Scene {
   preload(): void {}
 
   create(): void {
-    this._createButton(400, 200, TEXTURES.BUTTON_PLAY, SCENES.GAME);
+    this._createFloor();
+    // add text
+    const screenCenterX =
+      this.cameras.main.worldView.x + this.cameras.main.width / 2;
+    this.add
+      .text(screenCenterX, 80, 'Are you?', {
+        fontFamily: 'BitPotion',
+        color: '#fff',
+        fontSize: '92px',
+      })
+      .setOrigin(0.5);
+    this.add.text(20, 600, 'Controls: WASD', {
+      fontFamily: 'BitPotion',
+      color: '#fff',
+      fontSize: '28px',
+    });
+    this._createTextButton(screenCenterX, 200, '< play >', SCENES.GAME);
+    //this._createButton(400, 200, TEXTURES.BUTTON_PLAY, SCENES.GAME);
   }
 
   update(): void {}
@@ -27,7 +44,12 @@ export default class SceneMenu extends Phaser.Scene {
   // Private methods                              //
   //////////////////////////////////////////////////
 
-  _createButton(nX: number, nY: number, sTextureKey: TEXTURES, sStartScene: SCENES) {
+  _createButton(
+    nX: number,
+    nY: number,
+    sTextureKey: TEXTURES,
+    sStartScene: SCENES,
+  ) {
     const button = this.add.sprite(nX, nY, sTextureKey, 0);
     button.setScale(3);
     const pressAnimKey = `press${sTextureKey}`;
@@ -55,7 +77,7 @@ export default class SceneMenu extends Phaser.Scene {
       (animation) => {
         switch (animation.key) {
           case pressAnimKey:
-            this.scene.start(sStartScene)
+            this.scene.start(sStartScene);
             break;
         }
       },
@@ -63,5 +85,53 @@ export default class SceneMenu extends Phaser.Scene {
     );
 
     return button;
+  }
+
+  _createTextButton(
+    nX: number,
+    nY: number,
+    sText: string,
+    sStartScene: SCENES,
+  ) {
+    const text = this.add
+      .text(nX, nY, sText, {
+        fontFamily: 'BitPotion',
+        color: '#fff',
+        fontSize: '42px',
+      })
+      .setOrigin(0.5);
+    text.setInteractive({ useHandCursor: true });
+    text.on('pointerover', () => {
+      text.setColor('#eee');
+    });
+    text.on('pointerout', () => {
+      text.setColor('#fff');
+    });
+    text.on('pointerdown', () => {
+      this.scene.start(sStartScene);
+    });
+  }
+
+  _createFloor() {
+    const aLevel = [];
+    const nRows = this.scale.height / 32;
+    const nColumns = this.scale.width / 32;
+    // create 2D array with random tile numbers
+    for (let rowIndex = 0; rowIndex < nRows; rowIndex++) {
+      const aRow = [];
+      for (let columnIndex = 0; columnIndex < nColumns; columnIndex++) {
+        const nTile = Phaser.Math.Between(0, 3);
+        aRow.push(nTile);
+      }
+      aLevel.push(aRow);
+    }
+    // When loading from an array, make sure to specify the tileWidth and tileHeight
+    const map = this.make.tilemap({
+      data: aLevel,
+      tileWidth: 32,
+      tileHeight: 32,
+    });
+    const tiles = map.addTilesetImage(TEXTURES.FLOOR);
+    map.createLayer(0, tiles, 0, 0);
   }
 }
