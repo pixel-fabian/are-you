@@ -9,6 +9,7 @@ export default class SceneGame extends Phaser.Scene {
   private player?;
   private velocity = 100;
   private floorHoles?;
+  private ghosts?;
   private knownElements = {
     floorHoles: false,
     ghosts: false,
@@ -42,6 +43,7 @@ export default class SceneGame extends Phaser.Scene {
     this._createAnimations();
     this._createControls();
     this._spawnHoles();
+    this._spawnGhosts();
 
     const { x, y } = this._createRandomCoords();
     this.player = this.physics.add.sprite(x, y, TEXTURES.UNKNOWN, 0);
@@ -54,6 +56,13 @@ export default class SceneGame extends Phaser.Scene {
       this.player,
       this.floorHoles,
       this._onCollisionPlayerHole,
+      null,
+      this,
+    );
+    this.physics.add.collider(
+      this.player,
+      this.ghosts,
+      this._onCollisionPlayerGhost,
       null,
       this,
     );
@@ -94,6 +103,15 @@ export default class SceneGame extends Phaser.Scene {
       frames: this.anims.generateFrameNumbers(TEXTURES.UNKNOWN, {
         start: 0,
         end: 6,
+      }),
+      frameRate: 10,
+      repeat: -1, // -1: infinity
+    });
+    this.anims.create({
+      key: 'ghost',
+      frames: this.anims.generateFrameNumbers(TEXTURES.GHOST, {
+        start: 0,
+        end: 8,
       }),
       frameRate: 10,
       repeat: -1, // -1: infinity
@@ -181,6 +199,58 @@ export default class SceneGame extends Phaser.Scene {
   _onCollisionPlayerHole() {
     if (!this.knownElements.floorHoles) {
       this.knownElements.floorHoles = true;
+    }
+    this.scene.start(SCENES.GAME, {
+      knownElements: this.knownElements,
+    });
+  }
+
+  _spawnGhosts() {
+    const nQuantity = Phaser.Math.Between(5, 12);
+    const sTextureKey = this.knownElements.ghosts
+      ? TEXTURES.HOLE
+      : TEXTURES.GHOST;
+    this.ghosts = this.physics.add.group({
+      key: sTextureKey,
+      quantity: nQuantity,
+      bounceX: 1,
+      bounceY: 1,
+      collideWorldBounds: true,
+      immovable: true,
+    });
+    // spawn randomly
+    Phaser.Actions.RandomRectangle(
+      this.ghosts.getChildren(),
+      this.physics.world.bounds,
+    );
+    // Move around
+    this.ghosts.getChildren().forEach((ghost) => {
+      if (this.knownElements.ghosts) {
+        ghost.play('ghost');
+      } else {
+        ghost.setCircle(14, 2, 2);
+        ghost.play('unknown');
+      }
+
+      // move towards random direction
+      const { velocityX, velocityY } = this._getRandomDirection();
+      ghost.setVelocity(velocityX, velocityY);
+      // change direction
+      const nDelay = Phaser.Math.Between(200, 5000);
+      ghost.changeDirectionEvent = this.time.addEvent({
+        delay: nDelay,
+        callback: () => {
+          const { velocityX, velocityY } = this._getRandomDirection();
+          ghost.setVelocity(velocityX, velocityY);
+        },
+        loop: true,
+      });
+    });
+  }
+
+  _onCollisionPlayerGhost() {
+    if (!this.knownElements.ghosts) {
+      this.knownElements.ghosts = true;
     }
     this.scene.start(SCENES.GAME, {
       knownElements: this.knownElements,
