@@ -35,7 +35,13 @@ export default class SceneMenu extends Phaser.Scene {
       fontSize: '28px',
     });
     this._createTextButton(screenCenterX, 200, '< play >', SCENES.GAME);
-    //this._createButton(400, 200, TEXTURES.BUTTON_PLAY, SCENES.GAME);
+    this._createTextButton(
+      screenCenterX,
+      260,
+      '< collection >',
+      SCENES.COLLECTION,
+    );
+    this._createTextButton(screenCenterX, 320, '< credits >', SCENES.CREDITS);
   }
 
   update(): void {}
