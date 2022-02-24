@@ -1,6 +1,7 @@
 import 'phaser';
 import SCENES from '../constants/SceneKeys';
 import TEXTURES from '../constants/TextureKeys';
+import Helper from '../utils/helper';
 
 export default class SceneMenu extends Phaser.Scene {
   constructor() {
@@ -18,7 +19,7 @@ export default class SceneMenu extends Phaser.Scene {
   preload(): void {}
 
   create(): void {
-    this._createFloor();
+    Helper.createFloor(this, TEXTURES.FLOOR);
     // add text
     const screenCenterX = this.scale.width / 2;
     this.add
@@ -109,28 +110,5 @@ export default class SceneMenu extends Phaser.Scene {
     text.on('pointerdown', () => {
       this.scene.start(sStartScene);
     });
-  }
-
-  _createFloor() {
-    const aLevel = [];
-    const nRows = this.scale.height / 32;
-    const nColumns = this.scale.width / 32;
-    // create 2D array with random tile numbers
-    for (let rowIndex = 0; rowIndex < nRows; rowIndex++) {
-      const aRow = [];
-      for (let columnIndex = 0; columnIndex < nColumns; columnIndex++) {
-        const nTile = Phaser.Math.Between(0, 3);
-        aRow.push(nTile);
-      }
-      aLevel.push(aRow);
-    }
-    // When loading from an array, make sure to specify the tileWidth and tileHeight
-    const map = this.make.tilemap({
-      data: aLevel,
-      tileWidth: 32,
-      tileHeight: 32,
-    });
-    const tiles = map.addTilesetImage(TEXTURES.FLOOR);
-    map.createLayer(0, tiles, 0, 0);
   }
 }

@@ -1,17 +1,21 @@
 import 'phaser';
 import SCENES from '../constants/SceneKeys';
 import TEXTURES from '../constants/TextureKeys';
+import Helper from '../utils/helper';
+import Player from '../objects/player';
+import Enemies from '../objects/enemies';
+
 export default class SceneGame extends Phaser.Scene {
   private keyW: Phaser.Input.Keyboard.Key;
   private keyA: Phaser.Input.Keyboard.Key;
   private keyS: Phaser.Input.Keyboard.Key;
   private keyD: Phaser.Input.Keyboard.Key;
-  private player?;
   private velocity = 100;
-  private floorHoles?;
+  private player?: Player;
+  private holes?: Enemies;
   private ghosts?;
   private knownElements = {
-    floorHoles: false,
+    holes: false,
     ghosts: false,
     player: false,
   };
@@ -39,22 +43,20 @@ export default class SceneGame extends Phaser.Scene {
   preload(): void {}
 
   create(): void {
-    this._createFloor();
+    Helper.createFloor(this, TEXTURES.FLOOR);
     this._createAnimations();
     this._createControls();
     this._spawnHoles();
-    this._spawnGhosts();
+    //this._spawnGhosts();
 
-    const { x, y } = this._createRandomCoords();
-    this.player = this.physics.add.sprite(x, y, TEXTURES.UNKNOWN, 0);
-    this.player.play('unknown');
-    this.player.setCollideWorldBounds(true);
-    this.player.setImmovable(true);
+    const { x, y } = Helper.createRandomCoords(this);
+    this.player = new Player(this, x, y, TEXTURES.UNKNOWN, 0);
+    this.player.play(TEXTURES.UNKNOWN);
     this.player.setCircle(14, 2, 2);
 
     this.physics.add.collider(
       this.player,
-      this.floorHoles,
+      this.holes,
       this._onCollisionPlayerHole,
       null,
       this,
@@ -99,7 +101,7 @@ export default class SceneGame extends Phaser.Scene {
 
   _createAnimations() {
     this.anims.create({
-      key: 'unknown',
+      key: TEXTURES.UNKNOWN,
       frames: this.anims.generateFrameNumbers(TEXTURES.UNKNOWN, {
         start: 0,
         end: 6,
@@ -108,7 +110,7 @@ export default class SceneGame extends Phaser.Scene {
       repeat: -1, // -1: infinity
     });
     this.anims.create({
-      key: 'ghost',
+      key: TEXTURES.GHOST,
       frames: this.anims.generateFrameNumbers(TEXTURES.GHOST, {
         start: 0,
         end: 8,
@@ -118,135 +120,67 @@ export default class SceneGame extends Phaser.Scene {
     });
   }
 
-  _createRandomCoords() {
-    // width and height of the game screen
-    const width = this.scale.width;
-    const height = this.scale.height;
-
-    const x = Phaser.Math.Between(0, width - 16);
-    const y = Phaser.Math.Between(0, height - 16);
-
-    return { x, y };
-  }
-
-  _createFloor() {
-    const aLevel = [];
-    const nRows = this.scale.height / 32;
-    const nColumns = this.scale.width / 32;
-    // create 2D array with random tile numbers
-    for (let rowIndex = 0; rowIndex < nRows; rowIndex++) {
-      const aRow = [];
-      for (let columnIndex = 0; columnIndex < nColumns; columnIndex++) {
-        const nTile = Phaser.Math.Between(0, 3);
-        aRow.push(nTile);
-      }
-      aLevel.push(aRow);
-    }
-    // When loading from an array, make sure to specify the tileWidth and tileHeight
-    const map = this.make.tilemap({
-      data: aLevel,
-      tileWidth: 32,
-      tileHeight: 32,
-    });
-    const tiles = map.addTilesetImage(TEXTURES.FLOOR);
-    map.createLayer(0, tiles, 0, 0);
-  }
-
   _spawnHoles() {
-    const nNumberHoles = Phaser.Math.Between(5, 12);
-    const sTextureKey = this.knownElements.floorHoles
-      ? TEXTURES.HOLE
-      : TEXTURES.UNKNOWN;
-    this.floorHoles = this.physics.add.group({
-      key: sTextureKey,
-      quantity: nNumberHoles,
-      bounceX: 1,
-      bounceY: 1,
-      collideWorldBounds: true,
-      immovable: true,
+    this.holes = new Enemies(this.physics.world, this, {
+      known: this.knownElements.holes,
+      knownTexture: TEXTURES.HOLE,
+      knownMoving: false,
+      minQuantity: 5,
+      maxQuantity: 12,
+      velocity: this.velocity,
     });
-    // spawn randomly
-    Phaser.Actions.RandomRectangle(
-      this.floorHoles.getChildren(),
-      this.physics.world.bounds,
-    );
-    // if unkown: Move around
-    if (!this.knownElements.floorHoles) {
-      this.floorHoles.getChildren().forEach((hole) => {
-        hole.setCircle(14, 2, 2);
-        hole.play('unknown');
-        // move towards random direction
-        const { velocityX, velocityY } = this._getRandomDirection();
-        hole.setVelocity(velocityX, velocityY);
-        // change direction
-        const nDelay = Phaser.Math.Between(200, 5000);
-        hole.changeDirectionEvent = this.time.addEvent({
-          delay: nDelay,
-          callback: () => {
-            const { velocityX, velocityY } = this._getRandomDirection();
-            hole.setVelocity(velocityX, velocityY);
-          },
-          loop: true,
-        });
-      });
-    } else {
-      this.floorHoles.getChildren().forEach((hole) => {
-        hole.setCircle(14, 2, 2);
-      });
-    }
   }
 
   _onCollisionPlayerHole() {
-    if (!this.knownElements.floorHoles) {
-      this.knownElements.floorHoles = true;
+    if (!this.knownElements.holes) {
+      this.knownElements.holes = true;
     }
     this.scene.start(SCENES.GAME, {
       knownElements: this.knownElements,
     });
   }
 
-  _spawnGhosts() {
-    const nQuantity = Phaser.Math.Between(5, 12);
-    const sTextureKey = this.knownElements.ghosts
-      ? TEXTURES.HOLE
-      : TEXTURES.GHOST;
-    this.ghosts = this.physics.add.group({
-      key: sTextureKey,
-      quantity: nQuantity,
-      bounceX: 1,
-      bounceY: 1,
-      collideWorldBounds: true,
-      immovable: true,
-    });
-    // spawn randomly
-    Phaser.Actions.RandomRectangle(
-      this.ghosts.getChildren(),
-      this.physics.world.bounds,
-    );
-    // Move around
-    this.ghosts.getChildren().forEach((ghost) => {
-      if (this.knownElements.ghosts) {
-        ghost.play('ghost');
-      } else {
-        ghost.setCircle(14, 2, 2);
-        ghost.play('unknown');
-      }
-
-      // move towards random direction
-      const { velocityX, velocityY } = this._getRandomDirection();
-      ghost.setVelocity(velocityX, velocityY);
-      // change direction
-      const nDelay = Phaser.Math.Between(200, 5000);
-      ghost.changeDirectionEvent = this.time.addEvent({
-        delay: nDelay,
-        callback: () => {
-          const { velocityX, velocityY } = this._getRandomDirection();
-          ghost.setVelocity(velocityX, velocityY);
-        },
-        loop: true,
-      });
-    });
-  }
+  // _spawnGhosts() {
+  //   const nQuantity = Phaser.Math.Between(5, 12);
+  //   const sTextureKey = this.knownElements.ghosts
+  //     ? TEXTURES.HOLE
+  //     : TEXTURES.GHOST;
+  //   this.ghosts = this.physics.add.group({
+  //     key: sTextureKey,
+  //     quantity: nQuantity,
+  //     bounceX: 1,
+  //     bounceY: 1,
+  //     collideWorldBounds: true,
+  //     immovable: true,
+  //   });
+  //   // spawn randomly
+  //   Phaser.Actions.RandomRectangle(
+  //     this.ghosts.getChildren(),
+  //     this.physics.world.bounds,
+  //   );
+  //   // Move around
+  //   this.ghosts.getChildren().forEach((ghost) => {
+  //     if (this.knownElements.ghosts) {
+  //       ghost.play('ghost');
+  //     } else {
+  //       ghost.setCircle(14, 2, 2);
+  //       ghost.play('unknown');
+  //     }
+  //     // move towards random direction
+  //     const { velocityX, velocityY } = this._getRandomDirection();
+  //     ghost.setVelocity(velocityX, velocityY);
+  //     // change direction
+  //     const nDelay = Phaser.Math.Between(200, 5000);
+  //     ghost.changeDirectionEvent = this.time.addEvent({
+  //       delay: nDelay,
+  //       callback: () => {
+  //         const { velocityX, velocityY } = this._getRandomDirection();
+  //         ghost.setVelocity(velocityX, velocityY);
+  //       },
+  //       loop: true,
+  //     });
+  //   });
+  // }
 
   _onCollisionPlayerGhost() {
     if (!this.knownElements.ghosts) {
@@ -255,38 +189,5 @@ export default class SceneGame extends Phaser.Scene {
     this.scene.start(SCENES.GAME, {
       knownElements: this.knownElements,
     });
-  }
-
-  _getRandomDirection() {
-    const nDirection = Phaser.Math.Between(0, 8);
-    switch (nDirection) {
-      case 0:
-        // stand still
-        return { velocityX: 0, velocityY: 0 };
-      case 1:
-        // right
-        return { velocityX: this.velocity, velocityY: 0 };
-      case 2:
-        // right-down
-        return { velocityX: this.velocity, velocityY: this.velocity };
-      case 3:
-        // down
-        return { velocityX: 0, velocityY: this.velocity };
-      case 4:
-        // down-left
-        return { velocityX: -this.velocity, velocityY: this.velocity };
-      case 5:
-        // left
-        return { velocityX: -this.velocity, velocityY: 0 };
-      case 6:
-        // left-up
-        return { velocityX: -this.velocity, velocityY: -this.velocity };
-      case 7:
-        // up
-        return { velocityX: 0, velocityY: -this.velocity };
-      case 8:
-        // up-right
-        return { velocityX: this.velocity, velocityY: -this.velocity };
-    }
   }
 }
