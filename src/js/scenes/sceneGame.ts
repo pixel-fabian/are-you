@@ -13,7 +13,7 @@ export default class SceneGame extends Phaser.Scene {
   private velocity = 100;
   private player?: Player;
   private holes?: Enemies;
-  private ghosts?;
+  private ghosts?: Enemies;
   private knownElements = {
     holes: false,
     ghosts: false,
@@ -33,7 +33,6 @@ export default class SceneGame extends Phaser.Scene {
   init(data): void {
     if (data.knownElements) {
       this.knownElements = Object.assign(
-        {},
         this.knownElements,
         data.knownElements,
       );
@@ -47,7 +46,7 @@ export default class SceneGame extends Phaser.Scene {
     this._createAnimations();
     this._createControls();
     this._spawnHoles();
-    //this._spawnGhosts();
+    this._spawnGhosts();
 
     const { x, y } = Helper.createRandomCoords(this);
     this.player = new Player(this, x, y, TEXTURES.UNKNOWN, 0);
@@ -140,47 +139,16 @@ export default class SceneGame extends Phaser.Scene {
     });
   }
 
-  // _spawnGhosts() {
-  //   const nQuantity = Phaser.Math.Between(5, 12);
-  //   const sTextureKey = this.knownElements.ghosts
-  //     ? TEXTURES.HOLE
-  //     : TEXTURES.GHOST;
-  //   this.ghosts = this.physics.add.group({
-  //     key: sTextureKey,
-  //     quantity: nQuantity,
-  //     bounceX: 1,
-  //     bounceY: 1,
-  //     collideWorldBounds: true,
-  //     immovable: true,
-  //   });
-  //   // spawn randomly
-  //   Phaser.Actions.RandomRectangle(
-  //     this.ghosts.getChildren(),
-  //     this.physics.world.bounds,
-  //   );
-  //   // Move around
-  //   this.ghosts.getChildren().forEach((ghost) => {
-  //     if (this.knownElements.ghosts) {
-  //       ghost.play('ghost');
-  //     } else {
-  //       ghost.setCircle(14, 2, 2);
-  //       ghost.play('unknown');
-  //     }
-  //     // move towards random direction
-  //     const { velocityX, velocityY } = this._getRandomDirection();
-  //     ghost.setVelocity(velocityX, velocityY);
-  //     // change direction
-  //     const nDelay = Phaser.Math.Between(200, 5000);
-  //     ghost.changeDirectionEvent = this.time.addEvent({
-  //       delay: nDelay,
-  //       callback: () => {
-  //         const { velocityX, velocityY } = this._getRandomDirection();
-  //         ghost.setVelocity(velocityX, velocityY);
-  //       },
-  //       loop: true,
-  //     });
-  //   });
-  // }
+  _spawnGhosts() {
+    this.ghosts = new Enemies(this.physics.world, this, {
+      known: this.knownElements.ghosts,
+      knownTexture: TEXTURES.GHOST,
+      knownMoving: true,
+      minQuantity: 5,
+      maxQuantity: 12,
+      velocity: this.velocity,
+    });
+  }
 
   _onCollisionPlayerGhost() {
     if (!this.knownElements.ghosts) {
