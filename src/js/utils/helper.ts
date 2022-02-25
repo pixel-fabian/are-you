@@ -2,7 +2,7 @@ export default class Helper {
   /**
    * Create random coordinates within the scene
    *
-   * @param scene Scene
+   * @param scene Phaser scene
    * @returns
    */
   static createRandomCoords(scene: Phaser.Scene) {
@@ -19,8 +19,8 @@ export default class Helper {
   /**
    * Create floor with 32x32 tiles
    *
-   * @param scene
-   * @param sTextureKey
+   * @param scene Phaser scene
+   * @param sTextureKey Key for a texture
    */
   static createFloor(scene: Phaser.Scene, sTextureKey: string) {
     const aLevel = [];
@@ -43,5 +43,55 @@ export default class Helper {
     });
     const tiles = map.addTilesetImage(sTextureKey);
     map.createLayer(0, tiles, 0, 0);
+  }
+
+  /**
+   * Add text char by char (Typewriter effect)
+   *
+   * @param scene Phaser scene
+   * @param textObj Text object
+   * @param sText String of text to display
+   */
+  static textTypewriter(
+    scene: Phaser.Scene,
+    textObj: Phaser.GameObjects.Text,
+    sText: string,
+  ) {
+    const length = sText.length;
+    let i = 0;
+    scene.time.addEvent({
+      callback: () => {
+        textObj.text += sText[i];
+        ++i;
+      },
+      repeat: length - 1,
+      delay: 200,
+    });
+  }
+
+  static createTextButton(
+    scene: Phaser.Scene,
+    nX: number,
+    nY: number,
+    sText: string,
+    fnCallback: Function,
+  ) {
+    const text = scene.add
+      .text(nX, nY, sText, {
+        fontFamily: 'BitPotion',
+        color: '#fff',
+        fontSize: '42px',
+      })
+      .setOrigin(0.5);
+    text.setInteractive({ useHandCursor: true });
+    text.on('pointerover', () => {
+      text.setColor('#eee');
+    });
+    text.on('pointerout', () => {
+      text.setColor('#fff');
+    });
+    text.on('pointerdown', () => {
+      fnCallback(scene);
+    });
   }
 }

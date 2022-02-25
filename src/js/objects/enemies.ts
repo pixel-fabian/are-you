@@ -81,10 +81,10 @@ export default class Enemies extends Phaser.Physics.Arcade.Group {
       enemy.setBounceY(1);
       enemy.setCollideWorldBounds(true);
       enemy.setImmovable(true);
-      if (sTextureKey === TEXTURES.HOLE) {
+      enemy.revealTexture = this._revealTexture.bind(this);
+      if (sTextureKey === TEXTURES.HOLE || sTextureKey === TEXTURES.UNKNOWN) {
         enemy.setCircle(14, 2, 2);
       }
-
       // if unkown or known and knownMoving=true: Move around
       if (
         !this.enemyConfig.known ||
@@ -106,6 +106,20 @@ export default class Enemies extends Phaser.Physics.Arcade.Group {
         });
       }
     }
+  }
+
+  stop() {
+    this.getChildren().forEach((enemy: Phaser.Physics.Arcade.Sprite) => {
+      enemy.setVelocity(0);
+      if (enemy['changeDirectionEvent']) {
+        enemy['changeDirectionEvent'].paused = true;
+      }
+    });
+  }
+
+  _revealTexture(enemy: Phaser.Physics.Arcade.Sprite) {
+    enemy.stop();
+    enemy.setTexture(this.enemyConfig.knownTexture);
   }
 
   //////////////////////////////////////////////////

@@ -1,6 +1,7 @@
 import 'phaser';
 import SCENES from '../constants/SceneKeys';
 import TEXTURES from '../constants/TextureKeys';
+import AUDIO from '../constants/AudioKeys';
 import Helper from '../utils/helper';
 import Player from '../objects/player';
 import Enemies from '../objects/enemies';
@@ -10,10 +11,16 @@ export default class SceneGame extends Phaser.Scene {
   private keyA: Phaser.Input.Keyboard.Key;
   private keyS: Phaser.Input.Keyboard.Key;
   private keyD: Phaser.Input.Keyboard.Key;
-  private velocity = 100;
+  private velocity = 90;
+  private lifes = 3;
+  private pauseMovement = false;
   private player?: Player;
   private holes?: Enemies;
   private ghosts?: Enemies;
+  private soundDeath?: Phaser.Sound.BaseSound;
+  private textAreYou?: Phaser.GameObjects.Text;
+  private textLifes?: Phaser.GameObjects.Text;
+  private collision: boolean;
   private knownElements = {
     holes: false,
     ghosts: false,
@@ -30,18 +37,16 @@ export default class SceneGame extends Phaser.Scene {
   // LIFECYCLE (init, preload, create, update)    //
   //////////////////////////////////////////////////
 
-  init(data): void {
-    if (data.knownElements) {
-      this.knownElements = Object.assign(
-        this.knownElements,
-        data.knownElements,
-      );
-    }
+  init(): void {
+    this.pauseMovement = false;
+    this.collision = false;
   }
 
   preload(): void {}
 
   create(): void {
+    console.log(this);
+
     Helper.createFloor(this, TEXTURES.FLOOR);
     this._createAnimations();
     this._createControls();
@@ -67,6 +72,12 @@ export default class SceneGame extends Phaser.Scene {
       null,
       this,
     );
+    this.textLifes = this.add.text(10, 0, `Lifes: ${this.lifes}`, {
+      fontFamily: 'BitPotion',
+      color: '#fff',
+      fontSize: '28px',
+    });
+    this.soundDeath = this.sound.add(AUDIO.DEATH);
   }
 
   update(): void {
@@ -86,15 +97,18 @@ export default class SceneGame extends Phaser.Scene {
 
   _movePlayer() {
     this.player.setVelocity(0);
-    if (this.keyA.isDown) {
-      this.player.setVelocityX(-this.velocity);
-    } else if (this.keyD.isDown) {
-      this.player.setVelocityX(this.velocity);
-    }
-    if (this.keyW.isDown) {
-      this.player.setVelocityY(-this.velocity);
-    } else if (this.keyS.isDown) {
-      this.player.setVelocityY(this.velocity);
+
+    if (!this.pauseMovement) {
+      if (this.keyA.isDown) {
+        this.player.setVelocityX(-this.velocity);
+      } else if (this.keyD.isDown) {
+        this.player.setVelocityX(this.velocity);
+      }
+      if (this.keyW.isDown) {
+        this.player.setVelocityY(-this.velocity);
+      } else if (this.keyS.isDown) {
+        this.player.setVelocityY(this.velocity);
+      }
     }
   }
 
@@ -130,13 +144,15 @@ export default class SceneGame extends Phaser.Scene {
     });
   }
 
-  _onCollisionPlayerHole() {
+  _onCollisionPlayerHole(player, hole) {
+    if (this.collision) return;
+    this.collision = true;
     if (!this.knownElements.holes) {
       this.knownElements.holes = true;
+      this._revealElement(hole);
+    } else {
+      this._looseLife();
     }
-    this.scene.start(SCENES.GAME, {
-      knownElements: this.knownElements,
-    });
   }
 
   _spawnGhosts() {
@@ -150,12 +166,78 @@ export default class SceneGame extends Phaser.Scene {
     });
   }
 
-  _onCollisionPlayerGhost() {
+  _onCollisionPlayerGhost(player, ghost) {
+    if (this.collision) return;
+    this.collision = true;
     if (!this.knownElements.ghosts) {
       this.knownElements.ghosts = true;
+      this._revealElement(ghost);
+    } else {
+      this._looseLife();
     }
-    this.scene.start(SCENES.GAME, {
-      knownElements: this.knownElements,
+  }
+
+  _revealElement(element) {
+    if (this.pauseMovement) return;
+    this.soundDeath.play();
+    this.pauseMovement = true;
+    this.holes.stop();
+    this.ghosts.stop();
+    this.cameras.main.zoomTo(1.5, 700, 'Sine.easeOut');
+    this.cameras.main.startFollow(this.player);
+    this.time.addEvent({
+      delay: 800,
+      callback: () => {
+        this.cameras.main.zoomTo(2, 700, 'Sine.easeOut');
+        this.textAreYou = this.add
+          .text(this.player.x, this.player.y - 40, '', {
+            fontFamily: 'BitPotion',
+            color: '#fff',
+            fontSize: '92px',
+          })
+          .setOrigin(0.5, 1);
+        this.textAreYou.setAlpha(0.5);
+        Helper.textTypewriter(this, this.textAreYou, 'Are you?');
+      },
+      loop: false,
+    });
+    this.time.addEvent({
+      delay: 1600,
+      callback: () => {
+        this.cameras.main.zoomTo(2.5, 700, 'Sine.easeOut');
+        element.revealTexture(element);
+        Helper.createTextButton(
+          this,
+          this.player.x,
+          this.player.y + 50,
+          '< continue >',
+          this._continue,
+        );
+      },
+      loop: false,
+    });
+  }
+
+  _looseLife() {
+    this.lifes--;
+    this.textLifes.text = `Lifes: ${this.lifes}`;
+    if (this.lifes == 0) {
+      console.log('GAME OVER');
+    } else {
+      this.time.addEvent({
+        delay: 200,
+        callback: () => {
+          this.collision = false;
+        },
+        loop: false,
+      });
+    }
+  }
+
+  _continue(context) {
+    context.scene.start(SCENES.GAME, {
+      knownElements: context.knownElements,
+      lifes: context.lifes,
     });
   }
 }

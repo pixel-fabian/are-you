@@ -1,6 +1,8 @@
 import 'phaser';
 import SCENES from '../constants/SceneKeys';
 import TEXTURES from '../constants/TextureKeys';
+import AUDIO from '../constants/AudioKeys';
+
 export default class SceneLoad extends Phaser.Scene {
   constructor() {
     super({
@@ -45,6 +47,8 @@ export default class SceneLoad extends Phaser.Scene {
     });
     this.load.image(TEXTURES.FLOOR, 'assets/sprites/spr_floor.png');
     this.load.image(TEXTURES.HOLE, 'assets/sprites/spr_hole.png');
+    // load all audio
+    this.load.audio(AUDIO.DEATH, ['assets/sfx/death.wav']);
   }
 
   create(): void {
