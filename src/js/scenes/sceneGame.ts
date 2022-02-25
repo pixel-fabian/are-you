@@ -45,8 +45,6 @@ export default class SceneGame extends Phaser.Scene {
   preload(): void {}
 
   create(): void {
-    console.log(this);
-
     Helper.createFloor(this, TEXTURES.FLOOR);
     this._createAnimations();
     this._createControls();
@@ -144,8 +142,17 @@ export default class SceneGame extends Phaser.Scene {
     });
   }
 
-  _onCollisionPlayerHole(player, hole) {
-    if (this.collision) return;
+  _onCollisionPlayerHole(
+    player: Phaser.Physics.Arcade.Sprite,
+    hole: Phaser.Physics.Arcade.Sprite,
+  ) {
+    // collide only if no ongoing collision and player is not moving
+    if (
+      this.collision ||
+      (player.body.velocity.x == 0 && player.body.velocity.y == 0)
+    )
+      return;
+    // collision is happening:
     this.collision = true;
     if (!this.knownElements.holes) {
       this.knownElements.holes = true;
@@ -167,7 +174,13 @@ export default class SceneGame extends Phaser.Scene {
   }
 
   _onCollisionPlayerGhost(player, ghost) {
-    if (this.collision) return;
+    // collide only if no ongoing collision and player is not moving
+    if (
+      this.collision ||
+      (player.body.velocity.x == 0 && player.body.velocity.y == 0)
+    )
+      return;
+    // collision is happening:
     this.collision = true;
     if (!this.knownElements.ghosts) {
       this.knownElements.ghosts = true;
@@ -225,7 +238,7 @@ export default class SceneGame extends Phaser.Scene {
       console.log('GAME OVER');
     } else {
       this.time.addEvent({
-        delay: 200,
+        delay: 1000,
         callback: () => {
           this.collision = false;
         },
