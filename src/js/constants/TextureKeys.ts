@@ -1,9 +1,14 @@
 /* eslint-disable no-unused-vars */
 enum TEXTURES {
-  UNKNOWN = 'pixelheap',
+  BOOKS = 'books',
+  CHEST_CLOSED = 'chest_closed',
+  CHEST_OPEN = 'chest_open',
+  CLOVER = 'clover',
   FLOOR = 'floor',
-  HOLE = 'hole',
   GHOST = 'ghost',
+  HOLE = 'hole',
+  PORTAL = 'portal',
+  UNKNOWN = 'pixelheap',
 }
 
 export default TEXTURES;

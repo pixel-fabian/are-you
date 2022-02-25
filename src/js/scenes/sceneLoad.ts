@@ -32,7 +32,7 @@ export default class SceneLoad extends Phaser.Scene {
       loadingBar.fillRect(255, 255, 290 * nPercentage, 20);
     });
 
-    // load all textures
+    // load spritesheets
     this.load.spritesheet(
       TEXTURES.UNKNOWN,
       'assets/sprites/spr_pixelhaufen.png',
@@ -45,9 +45,21 @@ export default class SceneLoad extends Phaser.Scene {
       frameWidth: 32,
       frameHeight: 32,
     });
+    this.load.spritesheet(TEXTURES.PORTAL, 'assets/sprites/spr_portal.png', {
+      frameWidth: 32,
+      frameHeight: 32,
+    });
+    // load images
+    this.load.image(TEXTURES.BOOKS, 'assets/sprites/spr_books.png');
+    this.load.image(
+      TEXTURES.CHEST_CLOSED,
+      'assets/sprites/spr_chest_closed.png',
+    );
+    this.load.image(TEXTURES.CHEST_OPEN, 'assets/sprites/spr_chest_open.png');
+    this.load.image(TEXTURES.CLOVER, 'assets/sprites/spr_clover.png');
     this.load.image(TEXTURES.FLOOR, 'assets/sprites/spr_floor.png');
     this.load.image(TEXTURES.HOLE, 'assets/sprites/spr_hole.png');
-    // load all audio
+    // load audio
     this.load.audio(AUDIO.DEATH, ['assets/sfx/death.wav']);
   }
 

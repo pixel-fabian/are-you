@@ -5,6 +5,7 @@ import AUDIO from '../constants/AudioKeys';
 import Helper from '../utils/helper';
 import Player from '../objects/player';
 import Enemies from '../objects/enemies';
+import Chest from '../objects/chest';
 
 export default class SceneGame extends Phaser.Scene {
   private keyW: Phaser.Input.Keyboard.Key;
@@ -17,6 +18,7 @@ export default class SceneGame extends Phaser.Scene {
   private player?: Player;
   private holes?: Enemies;
   private ghosts?: Enemies;
+  private chests?: Chest[];
   private soundDeath?: Phaser.Sound.BaseSound;
   private textAreYou?: Phaser.GameObjects.Text;
   private textLifes?: Phaser.GameObjects.Text;
@@ -50,6 +52,8 @@ export default class SceneGame extends Phaser.Scene {
     this._createControls();
     this._spawnHoles();
     this._spawnGhosts();
+    this.chests = [];
+    this._spawnChests(3, TEXTURES.CLOVER);
 
     const { x, y } = Helper.createRandomCoords(this);
     this.player = new Player(this, x, y, TEXTURES.UNKNOWN, 0);
@@ -187,6 +191,20 @@ export default class SceneGame extends Phaser.Scene {
       this._revealElement(ghost);
     } else {
       this._looseLife();
+    }
+  }
+
+  _spawnChests(nQuantity, sItem) {
+    for (let index = 0; index < nQuantity; index++) {
+      const { x, y } = Helper.createRandomCoords(this);
+      if (index == 0) {
+        // Only one chest contains the item
+        const chest = new Chest(this, x, y, TEXTURES.CHEST_CLOSED, sItem);
+        this.chests.push(chest);
+      } else {
+        const chest = new Chest(this, x, y, TEXTURES.CHEST_CLOSED);
+        this.chests.push(chest);
+      }
     }
   }
 
