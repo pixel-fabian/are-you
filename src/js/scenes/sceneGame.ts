@@ -153,7 +153,10 @@ export default class SceneGame extends Phaser.Scene {
   _createUnknownSprite() {
     const head = this._rndChar();
     const item = this._rndChar();
-    const body = this._rndChar();
+    let body = this._rndChar();
+    while (body === item && body === head) {
+      body = this._rndChar();
+    }
     const sSprite = `assets/sprites/spr_${head}${item}${body}.png`;
 
     this.load.spritesheet(TEXTURES.UNKNOWN, sSprite, {

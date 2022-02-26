@@ -37,7 +37,7 @@ export default class NPCGroup extends Phaser.Physics.Arcade.Group {
     knownTexture: TEXTURES.UNKNOWN,
     knownMoving: false,
     minQuantity: 5,
-    maxQuantity: 12,
+    maxQuantity: 11,
     velocity: 100,
   };
 
