@@ -32,6 +32,7 @@ export default class SceneGame extends Phaser.Scene {
   private textLifes?: Phaser.GameObjects.Text;
   private collision: boolean;
   private pickup: boolean = false;
+  private buttonContinue;
   private knownElements = {
     books: false,
     ghosts: false,
@@ -51,9 +52,6 @@ export default class SceneGame extends Phaser.Scene {
   //////////////////////////////////////////////////
 
   init(data): void {
-    console.log('init', data);
-    console.log(this);
-
     // soft reset to continue game
     this.pauseMovement = false;
     this.collision = false;
@@ -81,6 +79,8 @@ export default class SceneGame extends Phaser.Scene {
     this._spawnChests(3, TEXTURES.CLOVER);
     this._spawnHoles();
     this._spawnGhosts();
+    this._spawnBooks();
+    this._spawnOldones();
 
     const { x, y } = Helper.createRandomCoords(this);
     this.player = new Player(this, x, y, TEXTURES.UNKNOWN, 0);
@@ -185,6 +185,20 @@ export default class SceneGame extends Phaser.Scene {
     );
     this.physics.add.collider(
       this.player,
+      this.books,
+      this._onCollisionPlayerBook,
+      null,
+      this,
+    );
+    this.physics.add.collider(
+      this.player,
+      this.oldones,
+      this._onCollisionPlayerOldone,
+      null,
+      this,
+    );
+    this.physics.add.collider(
+      this.player,
       this.chests,
       this._onCollisionPlayerChest,
       null,
@@ -210,27 +224,6 @@ export default class SceneGame extends Phaser.Scene {
     });
   }
 
-  _onCollisionPlayerHole(
-    player: Phaser.Physics.Arcade.Sprite,
-    hole: Phaser.Physics.Arcade.Sprite,
-  ) {
-    // collide only if no ongoing collision and player is not moving
-    if (
-      this.collision ||
-      (player.body.velocity.x == 0 && player.body.velocity.y == 0)
-    )
-      return;
-    // collision is happening:
-    this.collision = true;
-    if (!this.knownElements.holes) {
-      this.knownElements.holes = true;
-      this._takeDamage(hole);
-      this._zoomEffect(hole, true);
-    } else {
-      this._takeDamage(hole, 3);
-    }
-  }
-
   _spawnGhosts() {
     this.ghosts = new NPCGroup(this.physics.world, this, {
       known: this.knownElements.ghosts,
@@ -242,20 +235,26 @@ export default class SceneGame extends Phaser.Scene {
     });
   }
 
-  _onCollisionPlayerGhost(player, ghost) {
-    // collide only if no ongoing collision and player is not moving
-    if (
-      this.collision ||
-      (player.body.velocity.x == 0 && player.body.velocity.y == 0)
-    )
-      return;
-    // collision is happening:
-    this.collision = true;
-    this._takeDamage(ghost);
-    if (!this.knownElements.ghosts) {
-      this.knownElements.ghosts = true;
-      this._zoomEffect(ghost, true);
-    }
+  _spawnBooks() {
+    this.books = new NPCGroup(this.physics.world, this, {
+      known: this.knownElements.books,
+      knownTexture: TEXTURES.BOOKS,
+      knownMoving: false,
+      minQuantity: 5,
+      maxQuantity: 12,
+      velocity: this.velocity,
+    });
+  }
+
+  _spawnOldones() {
+    this.oldones = new NPCGroup(this.physics.world, this, {
+      known: this.knownElements.ghosts,
+      knownTexture: TEXTURES.OLDONE,
+      knownMoving: true,
+      minQuantity: 3,
+      maxQuantity: 7,
+      velocity: this.velocity,
+    });
   }
 
   _spawnChests(nQuantity, sItem) {
@@ -282,6 +281,74 @@ export default class SceneGame extends Phaser.Scene {
         );
         this.chests.push(chest);
       }
+    }
+  }
+
+  _onCollisionPlayerGhost(player, ghost) {
+    // collide only if no ongoing collision and player is not moving
+    if (
+      this.collision ||
+      (player.body.velocity.x == 0 && player.body.velocity.y == 0)
+    )
+      return;
+    // collision is happening:
+    this.collision = true;
+    this._takeDamage(ghost);
+    if (!this.knownElements.ghosts) {
+      this.knownElements.ghosts = true;
+      this._zoomEffect(ghost);
+    }
+  }
+
+  _onCollisionPlayerHole(
+    player: Phaser.Physics.Arcade.Sprite,
+    hole: Phaser.Physics.Arcade.Sprite,
+  ) {
+    // collide only if no ongoing collision and player is not moving
+    if (
+      this.collision ||
+      (player.body.velocity.x == 0 && player.body.velocity.y == 0)
+    )
+      return;
+    // collision is happening:
+    this.collision = true;
+    if (!this.knownElements.holes) {
+      this.knownElements.holes = true;
+      this._takeDamage(hole);
+      this._zoomEffect(hole);
+    } else {
+      this._takeDamage(hole, 3);
+    }
+  }
+
+  _onCollisionPlayerOldone(player, oldone) {
+    // collide only if no ongoing collision and player is not moving
+    if (
+      this.collision ||
+      (player.body.velocity.x == 0 && player.body.velocity.y == 0)
+    )
+      return;
+    // collision is happening:
+    this.collision = true;
+    this._takeDamage(oldone);
+    if (!this.knownElements.oldones) {
+      this.knownElements.oldones = true;
+      this._zoomEffect(oldone);
+    }
+  }
+
+  _onCollisionPlayerBook(player, book) {
+    // collide only if no ongoing collision and player is not moving
+    if (
+      this.collision ||
+      (player.body.velocity.x == 0 && player.body.velocity.y == 0)
+    )
+      return;
+    // collision is happening:
+    this.collision = true;
+    if (!this.knownElements.books) {
+      this.knownElements.books = true;
+      this._zoomEffect(book);
     }
   }
 
@@ -320,13 +387,15 @@ export default class SceneGame extends Phaser.Scene {
     });
   }
 
-  _zoomEffect(element, bLooseItems) {
+  _zoomEffect(element) {
     if (this.pauseMovement) return;
     const bGameOver = this.lifes <= 0 ? true : false;
     this.soundDeath.play();
     this.pauseMovement = true;
     this.holes.stop();
     this.ghosts.stop();
+    this.books.stop();
+    this.oldones.stop();
     this.cameras.main.zoomTo(1.5, 700, 'Sine.easeOut');
     this.cameras.main.startFollow(this.player);
     this.time.addEvent({
@@ -369,21 +438,13 @@ export default class SceneGame extends Phaser.Scene {
             '< main menu >',
             this._toMenu,
           );
-        } else if (bLooseItems) {
+        } else {
           Helper.createTextButton(
             this,
             this.player.x,
             this.player.y + 50,
             '< go on >',
             this._goOn,
-          );
-        } else {
-          Helper.createTextButton(
-            this,
-            this.player.x,
-            this.player.y + 50,
-            '< continue >',
-            this._continue,
           );
         }
       },
@@ -396,7 +457,7 @@ export default class SceneGame extends Phaser.Scene {
     this.lifes = this.lifes - nDamage;
     this.textLifes.text = `Lifes: ${this.lifes}`;
     if (this.lifes <= 0) {
-      this._zoomEffect(element, true);
+      this._zoomEffect(element);
     } else {
       this.time.addEvent({
         delay: 1000,
@@ -413,9 +474,6 @@ export default class SceneGame extends Phaser.Scene {
       knownElements: context.knownElements,
       lifes: context.lifes,
     });
-  }
-  _continue(context) {
-    context.cameras.main.zoomTo(1, 700, 'Sine.easeOut');
   }
   _toMenu(context) {
     context.scene.start(SCENES.MENU);

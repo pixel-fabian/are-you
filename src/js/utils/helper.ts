@@ -93,5 +93,7 @@ export default class Helper {
     text.on('pointerdown', () => {
       fnCallback(scene);
     });
+
+    return text;
   }
 }
