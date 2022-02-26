@@ -1,7 +1,7 @@
 {
   "name": "are-you",
-  "version": "0.1.0",
-  "description": "Game with phaser 3",
+  "version": "0.1.1",
+  "description": "Game build with phaser 3",
   "main": "index.html",
   "scripts": {
     "build": "cross-env NODE_ENV=production webpack",
