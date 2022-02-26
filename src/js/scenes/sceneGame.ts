@@ -23,9 +23,11 @@ export default class SceneGame extends Phaser.Scene {
   private chests: Chest[] = [];
   private items: Item[] = [];
   private soundDeath?: Phaser.Sound.BaseSound;
+  private soundPickup?: Phaser.Sound.BaseSound;
   private textAreYou?: Phaser.GameObjects.Text;
   private textLifes?: Phaser.GameObjects.Text;
   private collision: boolean;
+  private pickup: boolean = false;
   private knownElements = {
     holes: false,
     ghosts: false,
@@ -61,6 +63,7 @@ export default class SceneGame extends Phaser.Scene {
     this.player = new Player(this, x, y, TEXTURES.UNKNOWN, 0);
     this.player.play(TEXTURES.UNKNOWN);
     this.player.setCircle(14, 2, 2);
+    this.player.setPower(TEXTURES.CLOVER);
 
     this._addCollider();
     this.textLifes = this.add.text(10, 0, `Lifes: ${this.lifes}`, {
@@ -69,10 +72,18 @@ export default class SceneGame extends Phaser.Scene {
       fontSize: '28px',
     });
     this.soundDeath = this.sound.add(AUDIO.DEATH);
+    this.soundPickup = this.sound.add(AUDIO.PICKUP);
   }
 
   update(): void {
     this._movePlayer();
+
+    if (!this.pauseMovement) {
+      if (this.keyE.isDown) {
+        this.player.useClover();
+      }
+      this.player.updateCloverPosition();
+    }
   }
 
   //////////////////////////////////////////////////
@@ -144,6 +155,13 @@ export default class SceneGame extends Phaser.Scene {
       this.player,
       this.chests,
       this._onCollisionPlayerChest,
+      null,
+      this,
+    );
+    this.physics.add.collider(
+      this.player,
+      this.items,
+      this._onCollisionPlayerItem,
       null,
       this,
     );
@@ -240,6 +258,34 @@ export default class SceneGame extends Phaser.Scene {
     if (this.keyE.isDown) {
       chest.open(this);
     }
+  }
+
+  _onCollisionPlayerItem(player, item) {
+    if (this.pickup) return;
+    this.pickup = true;
+    this.soundPickup.play();
+    player.setPower(TEXTURES.CLOVER);
+    this.tweens.add({
+      targets: item,
+      angle: 360,
+      yoyo: false,
+      repeat: 0,
+      ease: 'Sine.easeInOut',
+    });
+    this.tweens.add({
+      targets: item,
+      scale: 0.2,
+      yoyo: false,
+      repeat: 0,
+      ease: 'Sine.easeInOut',
+    });
+    this.time.addEvent({
+      delay: 500,
+      callback: () => {
+        item.destroy();
+      },
+      loop: false,
+    });
   }
 
   _revealElement(element) {

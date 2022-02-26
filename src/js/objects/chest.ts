@@ -54,9 +54,12 @@ export default class Chest extends Phaser.Physics.Arcade.Sprite {
     this.soundOpen.play();
     this.opened = true;
     this.setTexture(this.textureOpen);
-    const spawnX = this.x + Phaser.Math.Between(-20, 20);
-    const spawnY = this.y + Phaser.Math.Between(-20, 20);
-    const newItem = new Item(scene, spawnX, spawnY, this.item);
-    scene.items.push(newItem);
+
+    if (this.item) {
+      const spawnX = this.x + Phaser.Math.Between(-20, 20);
+      const spawnY = this.y + Phaser.Math.Between(-20, 20);
+      const newItem = new Item(scene, spawnX, spawnY, this.item);
+      scene.items.push(newItem);
+    }
   }
 }
