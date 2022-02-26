@@ -4,7 +4,7 @@ import TEXTURES from '../constants/TextureKeys';
 import AUDIO from '../constants/AudioKeys';
 import Helper from '../utils/helper';
 import Player from '../objects/player';
-import Enemies from '../objects/enemies';
+import NPCGroup from '../objects/npcGroup';
 import Chest from '../objects/chest';
 import Item from '../objects/item';
 
@@ -19,19 +19,24 @@ export default class SceneGame extends Phaser.Scene {
   private lifes: number = 3;
   private pauseMovement: boolean = false;
   private player?: Player;
-  private holes?: Enemies;
-  private ghosts?: Enemies;
+  private holes?: NPCGroup;
+  private ghosts?: NPCGroup;
+  private books?: NPCGroup;
+  private oldones?: NPCGroup;
   private chests: Chest[] = [];
   private items: Item[] = [];
   private soundDeath?: Phaser.Sound.BaseSound;
   private soundPickup?: Phaser.Sound.BaseSound;
+  private soundTakedamage?: Phaser.Sound.BaseSound;
   private textAreYou?: Phaser.GameObjects.Text;
   private textLifes?: Phaser.GameObjects.Text;
   private collision: boolean;
   private pickup: boolean = false;
   private knownElements = {
-    holes: false,
+    books: false,
     ghosts: false,
+    holes: false,
+    oldones: false,
     player: false,
   };
 
@@ -45,9 +50,26 @@ export default class SceneGame extends Phaser.Scene {
   // LIFECYCLE (init, preload, create, update)    //
   //////////////////////////////////////////////////
 
-  init(): void {
+  init(data): void {
+    console.log('init', data);
+    console.log(this);
+
+    // soft reset to continue game
     this.pauseMovement = false;
     this.collision = false;
+    // hard reset after death
+    if (!data.knownElements) {
+      this.knownElements = {
+        books: false,
+        ghosts: false,
+        holes: false,
+        oldones: false,
+        player: false,
+      };
+    }
+    if (!data.lifes) {
+      this.lifes = 3;
+    }
   }
 
   preload(): void {}
@@ -73,6 +95,7 @@ export default class SceneGame extends Phaser.Scene {
     });
     this.soundDeath = this.sound.add(AUDIO.DEATH);
     this.soundPickup = this.sound.add(AUDIO.PICKUP);
+    this.soundTakedamage = this.sound.add(AUDIO.TAKEDAMAGE);
   }
 
   update(): void {
@@ -177,7 +200,7 @@ export default class SceneGame extends Phaser.Scene {
   }
 
   _spawnHoles() {
-    this.holes = new Enemies(this.physics.world, this, {
+    this.holes = new NPCGroup(this.physics.world, this, {
       known: this.knownElements.holes,
       knownTexture: TEXTURES.HOLE,
       knownMoving: false,
@@ -201,14 +224,15 @@ export default class SceneGame extends Phaser.Scene {
     this.collision = true;
     if (!this.knownElements.holes) {
       this.knownElements.holes = true;
-      this._revealElement(hole);
+      this._takeDamage(hole);
+      this._zoomEffect(hole, true);
     } else {
-      this._looseLife();
+      this._takeDamage(hole, 3);
     }
   }
 
   _spawnGhosts() {
-    this.ghosts = new Enemies(this.physics.world, this, {
+    this.ghosts = new NPCGroup(this.physics.world, this, {
       known: this.knownElements.ghosts,
       knownTexture: TEXTURES.GHOST,
       knownMoving: true,
@@ -227,11 +251,10 @@ export default class SceneGame extends Phaser.Scene {
       return;
     // collision is happening:
     this.collision = true;
+    this._takeDamage(ghost);
     if (!this.knownElements.ghosts) {
       this.knownElements.ghosts = true;
-      this._revealElement(ghost);
-    } else {
-      this._looseLife();
+      this._zoomEffect(ghost, true);
     }
   }
 
@@ -297,8 +320,9 @@ export default class SceneGame extends Phaser.Scene {
     });
   }
 
-  _revealElement(element) {
+  _zoomEffect(element, bLooseItems) {
     if (this.pauseMovement) return;
+    const bGameOver = this.lifes <= 0 ? true : false;
     this.soundDeath.play();
     this.pauseMovement = true;
     this.holes.stop();
@@ -317,7 +341,11 @@ export default class SceneGame extends Phaser.Scene {
           })
           .setOrigin(0.5, 1);
         this.textAreYou.setAlpha(0.5);
-        Helper.textTypewriter(this, this.textAreYou, 'Are you?');
+        if (bGameOver) {
+          Helper.textTypewriter(this, this.textAreYou, 'GameOver');
+        } else {
+          Helper.textTypewriter(this, this.textAreYou, 'Are you?');
+        }
       },
       loop: false,
     });
@@ -326,23 +354,49 @@ export default class SceneGame extends Phaser.Scene {
       callback: () => {
         this.cameras.main.zoomTo(2.5, 700, 'Sine.easeOut');
         element.revealTexture(element);
-        Helper.createTextButton(
-          this,
-          this.player.x,
-          this.player.y + 50,
-          '< continue >',
-          this._continue,
-        );
+        if (bGameOver) {
+          Helper.createTextButton(
+            this,
+            this.player.x,
+            this.player.y + 40,
+            '< restart >',
+            this._restart,
+          );
+          Helper.createTextButton(
+            this,
+            this.player.x,
+            this.player.y + 80,
+            '< main menu >',
+            this._toMenu,
+          );
+        } else if (bLooseItems) {
+          Helper.createTextButton(
+            this,
+            this.player.x,
+            this.player.y + 50,
+            '< go on >',
+            this._goOn,
+          );
+        } else {
+          Helper.createTextButton(
+            this,
+            this.player.x,
+            this.player.y + 50,
+            '< continue >',
+            this._continue,
+          );
+        }
       },
       loop: false,
     });
   }
 
-  _looseLife() {
-    this.lifes--;
+  _takeDamage(element, nDamage = 1) {
+    this.soundTakedamage.play();
+    this.lifes = this.lifes - nDamage;
     this.textLifes.text = `Lifes: ${this.lifes}`;
-    if (this.lifes == 0) {
-      console.log('GAME OVER');
+    if (this.lifes <= 0) {
+      this._zoomEffect(element, true);
     } else {
       this.time.addEvent({
         delay: 1000,
@@ -354,11 +408,20 @@ export default class SceneGame extends Phaser.Scene {
     }
   }
 
-  _continue(context) {
+  _goOn(context) {
     context.scene.start(SCENES.GAME, {
       knownElements: context.knownElements,
       lifes: context.lifes,
     });
+  }
+  _continue(context) {
+    context.cameras.main.zoomTo(1, 700, 'Sine.easeOut');
+  }
+  _toMenu(context) {
+    context.scene.start(SCENES.MENU);
+  }
+  _restart(context) {
+    context.scene.start(SCENES.GAME, {});
   }
 
   //////////////////////////////////////////////////

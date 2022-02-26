@@ -124,7 +124,7 @@ export default class SceneMenu extends Phaser.Scene {
       text.setColor('#fff');
     });
     text.on('pointerdown', () => {
-      this.scene.start(sStartScene);
+      this.scene.start(sStartScene, {});
     });
   }
 }
