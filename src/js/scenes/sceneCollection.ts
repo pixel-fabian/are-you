@@ -29,6 +29,13 @@ export default class SceneCollection extends Phaser.Scene {
         fontSize: '68px',
       })
       .setOrigin(0.5);
+    this.add
+      .text(screenCenterX, 300, 'coming soon...', {
+        fontFamily: 'BitPotion',
+        color: '#fff',
+        fontSize: '36px',
+      })
+      .setOrigin(0.5);
     this._createTextButton(60, 600, '<- back', SCENES.MENU);
   }
 
