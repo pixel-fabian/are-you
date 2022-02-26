@@ -63,7 +63,6 @@ export default class SceneGame extends Phaser.Scene {
     this.player = new Player(this, x, y, TEXTURES.UNKNOWN, 0);
     this.player.play(TEXTURES.UNKNOWN);
     this.player.setCircle(14, 2, 2);
-    this.player.setPower(TEXTURES.CLOVER);
 
     this._addCollider();
     this.textLifes = this.add.text(10, 0, `Lifes: ${this.lifes}`, {
@@ -80,10 +79,18 @@ export default class SceneGame extends Phaser.Scene {
 
     if (!this.pauseMovement) {
       if (this.keyE.isDown) {
-        this.player.useClover();
+        this.player.useClover(this);
       }
       this.player.updateCloverPosition();
     }
+  }
+
+  onCollisionCircleGhosts(circle, ghost) {
+    this.ghosts.tmpReveal(ghost);
+  }
+
+  onCollisionCircleHoles(circle, hole) {
+    this.holes.tmpReveal(hole);
   }
 
   //////////////////////////////////////////////////
@@ -350,5 +357,16 @@ export default class SceneGame extends Phaser.Scene {
       knownElements: context.knownElements,
       lifes: context.lifes,
     });
+  }
+
+  //////////////////////////////////////////////////
+  // Getter & Setter                              //
+  //////////////////////////////////////////////////
+
+  getGhosts() {
+    return this.ghosts;
+  }
+  getHoles() {
+    return this.holes;
   }
 }

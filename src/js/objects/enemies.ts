@@ -123,6 +123,24 @@ export default class Enemies extends Phaser.Physics.Arcade.Group {
     enemy.setTexture(this.enemyConfig.knownTexture);
   }
 
+  tmpReveal(enemy: Phaser.Physics.Arcade.Sprite) {
+    if (!this.enemyConfig.known) {
+      enemy.stop();
+      enemy.setTexture(this.enemyConfig.knownTexture);
+      if (this.scene.anims.exists(this.enemyConfig.knownTexture)) {
+        enemy.play(this.enemyConfig.knownTexture);
+      }
+    }
+    this.scene.time.addEvent({
+      delay: 2000,
+      callback: () => {
+        enemy.setTexture(TEXTURES.UNKNOWN);
+        enemy.play(TEXTURES.UNKNOWN);
+      },
+      loop: false,
+    });
+  }
+
   //////////////////////////////////////////////////
   // Private methods                              //
   //////////////////////////////////////////////////

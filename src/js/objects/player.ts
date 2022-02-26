@@ -39,7 +39,8 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     }
   }
 
-  useClover() {
+  useClover(scene) {
+    // can use clover if collected, not in use and timer is 0
     if (
       !this.hasPowerClover ||
       this.timerPowerClover > 0 ||
@@ -48,13 +49,11 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
       return;
     this.usePowerClover = true;
     this.iconPowerClover.setStrokeStyle(2, 0xefc53f);
-    this.circlePowerClover = this.scene.add.circle(
-      this.x,
-      this.y,
-      70,
-      0x6abe30,
-    );
+    this.circlePowerClover = scene.add.circle(this.x, this.y, 70, 0x6abe30);
     this.circlePowerClover.setAlpha(0.2);
+    scene.physics.add.existing(this.circlePowerClover);
+    this.circlePowerClover.body.setCircle(70);
+    this.circlePowerClover.body.setImmovable(true);
     this.scene.time.addEvent({
       delay: 5000,
       callback: () => {
@@ -66,6 +65,20 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
       },
       loop: false,
     });
+    scene.physics.add.collider(
+      this.circlePowerClover,
+      scene.ghosts,
+      scene.onCollisionCircleGhosts,
+      null,
+      scene,
+    );
+    scene.physics.add.collider(
+      this.circlePowerClover,
+      scene.holes,
+      scene.onCollisionCircleHoles,
+      null,
+      scene,
+    );
   }
 
   updateCloverPosition() {
