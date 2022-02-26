@@ -30,13 +30,13 @@ export default class SceneWinning extends Phaser.Scene {
       })
       .setOrigin(0.5);
     this.add
-      .text(screenCenterX, 120, 'You are!', {
+      .text(screenCenterX, 180, 'You are!', {
         fontFamily: 'BitPotion',
         color: '#fff',
         fontSize: '68px',
       })
       .setOrigin(0.5);
-    this._createTextButton(screenCenterX, 600, '< to menu >', SCENES.MENU);
+    this._createTextButton(screenCenterX, 400, '< to menu >', SCENES.MENU);
   }
 
   update(): void {}
