@@ -74,7 +74,7 @@ export default class NPCGroup extends Phaser.Physics.Arcade.Group {
       ? this.npcConfig.knownTexture
       : TEXTURES.UNKNOWN;
 
-    for (let index = 0; index <= nQuantity; index++) {
+    for (let index = 0; index < nQuantity; index++) {
       const { x, y } = Helper.createRandomCoords(scene);
       const npc = this.create(x, y, sTextureKey);
       npc.setBounceX(1);
@@ -118,9 +118,20 @@ export default class NPCGroup extends Phaser.Physics.Arcade.Group {
     });
   }
 
+  resume() {
+    this.getChildren().forEach((npc: Phaser.Physics.Arcade.Sprite) => {
+      if (npc['changeDirectionEvent']) {
+        npc['changeDirectionEvent'].paused = false;
+      }
+    });
+  }
+
   _revealTexture(npc: Phaser.Physics.Arcade.Sprite) {
     npc.stop();
     npc.setTexture(this.npcConfig.knownTexture);
+    if (this.scene.anims.exists(this.npcConfig.knownTexture)) {
+      npc.play(this.npcConfig.knownTexture);
+    }
   }
 
   tmpReveal(npc: Phaser.Physics.Arcade.Sprite) {

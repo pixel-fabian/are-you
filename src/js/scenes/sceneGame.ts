@@ -17,12 +17,14 @@ export default class SceneGame extends Phaser.Scene {
   private keyQ: Phaser.Input.Keyboard.Key;
   private velocity: number = 90;
   private lifes: number = 3;
+  private photosCollected: number = 0;
   private pauseMovement: boolean = false;
   private player?: Player;
   private holes?: NPCGroup;
   private ghosts?: NPCGroup;
   private books?: NPCGroup;
   private oldones?: NPCGroup;
+  private photos?: NPCGroup;
   private chests: Chest[] = [];
   private items: Item[] = [];
   private soundDeath?: Phaser.Sound.BaseSound;
@@ -30,6 +32,7 @@ export default class SceneGame extends Phaser.Scene {
   private soundTakedamage?: Phaser.Sound.BaseSound;
   private textAreYou?: Phaser.GameObjects.Text;
   private textLifes?: Phaser.GameObjects.Text;
+  private textPhotos?: Phaser.GameObjects.Text;
   private collision: boolean;
   private pickup: boolean = false;
   private buttonContinue;
@@ -80,10 +83,11 @@ export default class SceneGame extends Phaser.Scene {
     this._createAnimations();
     this._createControls();
     this._spawnChests(3, TEXTURES.CLOVER);
-    this._spawnBooks();
-    this._spawnHoles();
-    this._spawnGhosts();
-    this._spawnOldones();
+    // this._spawnBooks();
+    this._spawnPhotos();
+    // this._spawnHoles();
+    // this._spawnGhosts();
+    // this._spawnOldones();
 
     const { x, y } = Helper.createRandomCoords(this);
     this.player = new Player(this, x, y, TEXTURES.UNKNOWN, 0);
@@ -96,6 +100,16 @@ export default class SceneGame extends Phaser.Scene {
       color: '#fff',
       fontSize: '28px',
     });
+    this.textPhotos = this.add.text(
+      100,
+      0,
+      `Photos: ${this.photosCollected}/3`,
+      {
+        fontFamily: 'BitPotion',
+        color: '#fff',
+        fontSize: '28px',
+      },
+    );
     this.soundDeath = this.sound.add(AUDIO.DEATH);
     this.soundPickup = this.sound.add(AUDIO.PICKUP);
     this.soundTakedamage = this.sound.add(AUDIO.TAKEDAMAGE);
@@ -128,6 +142,10 @@ export default class SceneGame extends Phaser.Scene {
     this.oldones.tmpReveal(oldone);
   }
 
+  onCollisionCirclePhotos(circle, photo) {
+    this.photos.tmpReveal(photo);
+  }
+
   //////////////////////////////////////////////////
   // Private methods                              //
   //////////////////////////////////////////////////
@@ -135,8 +153,8 @@ export default class SceneGame extends Phaser.Scene {
   _createUnknownSprite() {
     const head = this._rndChar();
     const item = this._rndChar();
-    const foot = this._rndChar();
-    const sSprite = `assets/sprites/spr_${head}${item}${foot}.png`;
+    const body = this._rndChar();
+    const sSprite = `assets/sprites/spr_${head}${item}${body}.png`;
 
     this.load.spritesheet(TEXTURES.UNKNOWN, sSprite, {
       frameWidth: 32,
@@ -210,6 +228,33 @@ export default class SceneGame extends Phaser.Scene {
       frameRate: 5,
       repeat: -1, // -1: infinity
     });
+    this.anims.create({
+      key: TEXTURES.PHOTO_D,
+      frames: this.anims.generateFrameNumbers(TEXTURES.PHOTO_D, {
+        start: 0,
+        end: 5,
+      }),
+      frameRate: 5,
+      repeat: -1, // -1: infinity
+    });
+    this.anims.create({
+      key: TEXTURES.PHOTO_H,
+      frames: this.anims.generateFrameNumbers(TEXTURES.PHOTO_H, {
+        start: 0,
+        end: 5,
+      }),
+      frameRate: 5,
+      repeat: -1, // -1: infinity
+    });
+    this.anims.create({
+      key: TEXTURES.PHOTO_O,
+      frames: this.anims.generateFrameNumbers(TEXTURES.PHOTO_O, {
+        start: 0,
+        end: 5,
+      }),
+      frameRate: 5,
+      repeat: -1, // -1: infinity
+    });
   }
 
   _addCollider() {
@@ -255,6 +300,13 @@ export default class SceneGame extends Phaser.Scene {
       null,
       this,
     );
+    this.physics.add.collider(
+      this.player,
+      this.photos,
+      this._onCollisionPlayerPhoto,
+      null,
+      this,
+    );
   }
 
   _spawnHoles() {
@@ -297,6 +349,17 @@ export default class SceneGame extends Phaser.Scene {
       knownMoving: true,
       minQuantity: 3,
       maxQuantity: 7,
+      velocity: this.velocity,
+    });
+  }
+
+  _spawnPhotos() {
+    this.photos = new NPCGroup(this.physics.world, this, {
+      known: false,
+      knownTexture: TEXTURES.PHOTO_D,
+      knownMoving: false,
+      minQuantity: 3,
+      maxQuantity: 3,
       velocity: this.velocity,
     });
   }
@@ -405,6 +468,22 @@ export default class SceneGame extends Phaser.Scene {
     }
   }
 
+  _onCollisionPlayerPhoto(
+    player: Phaser.Physics.Arcade.Sprite,
+    photo: Phaser.Physics.Arcade.Sprite,
+  ) {
+    // collide only if no ongoing collision and player is not moving
+    if (
+      this.collision ||
+      (player.body.velocity.x == 0 && player.body.velocity.y == 0)
+    )
+      return;
+    // collision is happening:
+    this.photosCollected++;
+    this.textPhotos.text = `Photos: ${this.photosCollected}/3`;
+    this._zoomEffect(photo, true);
+  }
+
   _onCollisionPlayerChest(player, chest) {
     // open if colliding an action button is pressed
     if (this.keyE.isDown || this.keyQ.isDown) {
@@ -413,10 +492,15 @@ export default class SceneGame extends Phaser.Scene {
   }
 
   _onCollisionPlayerItem(player, item) {
+    player.setPower(TEXTURES.CLOVER);
+    this._pickupItem(item);
+  }
+
+  _pickupItem(item) {
     if (this.pickup) return;
     this.pickup = true;
     this.soundPickup.play();
-    player.setPower(TEXTURES.CLOVER);
+    this._pickupItem(item);
     this.tweens.add({
       targets: item,
       angle: 360,
@@ -432,23 +516,25 @@ export default class SceneGame extends Phaser.Scene {
       ease: 'Sine.easeInOut',
     });
     this.time.addEvent({
-      delay: 500,
+      delay: 1000,
       callback: () => {
         item.destroy();
+        this.pickup = false;
       },
       loop: false,
     });
   }
 
-  _zoomEffect(element) {
+  _zoomEffect(element, bCollectItem = false) {
     if (this.pauseMovement) return;
     const bGameOver = this.lifes <= 0 ? true : false;
     this.soundDeath.play();
     this.pauseMovement = true;
-    this.holes.stop();
-    this.ghosts.stop();
-    this.books.stop();
-    this.oldones.stop();
+    // this.holes.stop();
+    // this.ghosts.stop();
+    // this.books.stop();
+    // this.oldones.stop();
+    this.photos.stop();
     this.cameras.main.zoomTo(1.5, 700, 'Sine.easeOut');
     this.cameras.main.startFollow(this.player);
     this.time.addEvent({
@@ -491,6 +577,21 @@ export default class SceneGame extends Phaser.Scene {
             '< main menu >',
             this._toMenu,
           );
+        } else if (bCollectItem) {
+          this.time.addEvent({
+            delay: 1600,
+            callback: () => {
+              this._pickupItem(element);
+              this.buttonContinue = Helper.createTextButton(
+                this,
+                this.player.x,
+                this.player.y + 50,
+                '< continue >',
+                this._continue,
+              );
+            },
+            loop: false,
+          });
         } else {
           Helper.createTextButton(
             this,
@@ -527,6 +628,21 @@ export default class SceneGame extends Phaser.Scene {
       knownElements: context.knownElements,
       lifes: context.lifes,
     });
+  }
+  _continue(context) {
+    context.pauseMovement = false;
+    context.collision = false;
+    context.pickup = false;
+    context.buttonContinue.destroy();
+    context.textAreYou.destroy();
+    context.cameras.main.zoomTo(1, 700, 'Sine.easeOut');
+    context.cameras.main.stopFollow();
+    context.cameras.main.setScroll(0);
+    // context.holes.resume();
+    // context.ghosts.resume();
+    // context.books.resume();
+    // context.oldones.resume();
+    context.photos.resume();
   }
   _toMenu(context) {
     context.scene.start(SCENES.MENU);
