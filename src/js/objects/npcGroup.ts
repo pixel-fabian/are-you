@@ -101,7 +101,9 @@ export default class NPCGroup extends Phaser.Physics.Arcade.Group {
           delay: nDelay,
           callback: () => {
             const { velocityX, velocityY } = this._getRandomDirection();
-            npc.setVelocity(velocityX, velocityY);
+            if (npc.body) {
+              npc.setVelocity(velocityX, velocityY);
+            }
           },
           loop: true,
         });
