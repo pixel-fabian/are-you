@@ -1,6 +1,6 @@
 {
   "name": "are-you",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Game build with phaser 3",
   "main": "index.html",
   "scripts": {
