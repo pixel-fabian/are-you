@@ -79,6 +79,20 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
       null,
       scene,
     );
+    scene.physics.add.collider(
+      this.circlePowerClover,
+      scene.books,
+      scene.onCollisionCircleBooks,
+      null,
+      scene,
+    );
+    scene.physics.add.collider(
+      this.circlePowerClover,
+      scene.oldones,
+      scene.onCollisionCircleOldones,
+      null,
+      scene,
+    );
   }
 
   updateCloverPosition() {

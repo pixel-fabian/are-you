@@ -117,6 +117,14 @@ export default class SceneGame extends Phaser.Scene {
     this.holes.tmpReveal(hole);
   }
 
+  onCollisionCircleBooks(circle, book) {
+    this.books.tmpReveal(book);
+  }
+
+  onCollisionCircleOldones(circle, oldone) {
+    this.oldones.tmpReveal(oldone);
+  }
+
   //////////////////////////////////////////////////
   // Private methods                              //
   //////////////////////////////////////////////////
