@@ -45,6 +45,14 @@ export default class SceneLoad extends Phaser.Scene {
       frameWidth: 32,
       frameHeight: 32,
     });
+    this.load.spritesheet(TEXTURES.OLDONE, 'assets/sprites/spr_oldone.png', {
+      frameWidth: 32,
+      frameHeight: 32,
+    });
+    this.load.spritesheet(TEXTURES.PHOTO, 'assets/sprites/spr_photo.png', {
+      frameWidth: 32,
+      frameHeight: 32,
+    });
     this.load.spritesheet(TEXTURES.PORTAL, 'assets/sprites/spr_portal.png', {
       frameWidth: 32,
       frameHeight: 32,
@@ -63,7 +71,7 @@ export default class SceneLoad extends Phaser.Scene {
     this.load.audio(AUDIO.DEATH, ['assets/sfx/death.wav']);
     this.load.audio(AUDIO.OPEN, ['assets/sfx/open.wav']);
     this.load.audio(AUDIO.PICKUP, ['assets/sfx/pickup.wav']);
-    //this.load.audio(AUDIO.TAKEDAMAGE['assets/sfx/takedamage.wav']);
+    this.load.audio(AUDIO.TAKEDAMAGE, ['assets/sfx/takedamage.wav']);
   }
 
   create(): void {

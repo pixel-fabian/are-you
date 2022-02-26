@@ -7,6 +7,8 @@ enum TEXTURES {
   FLOOR = 'floor',
   GHOST = 'ghost',
   HOLE = 'hole',
+  OLDONE = 'oldone',
+  PHOTO = 'photo',
   PORTAL = 'portal',
   UNKNOWN = 'pixelheap',
 }
