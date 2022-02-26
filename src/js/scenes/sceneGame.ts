@@ -6,12 +6,14 @@ import Helper from '../utils/helper';
 import Player from '../objects/player';
 import Enemies from '../objects/enemies';
 import Chest from '../objects/chest';
+import Item from '../objects/item';
 
 export default class SceneGame extends Phaser.Scene {
   private keyW: Phaser.Input.Keyboard.Key;
   private keyA: Phaser.Input.Keyboard.Key;
   private keyS: Phaser.Input.Keyboard.Key;
   private keyD: Phaser.Input.Keyboard.Key;
+  private keyE: Phaser.Input.Keyboard.Key;
   private velocity = 90;
   private lifes = 3;
   private pauseMovement = false;
@@ -19,6 +21,7 @@ export default class SceneGame extends Phaser.Scene {
   private holes?: Enemies;
   private ghosts?: Enemies;
   private chests?: Chest[];
+  private items?: Item[];
   private soundDeath?: Phaser.Sound.BaseSound;
   private textAreYou?: Phaser.GameObjects.Text;
   private textLifes?: Phaser.GameObjects.Text;
@@ -50,30 +53,17 @@ export default class SceneGame extends Phaser.Scene {
     Helper.createFloor(this, TEXTURES.FLOOR);
     this._createAnimations();
     this._createControls();
-    this._spawnHoles();
-    this._spawnGhosts();
     this.chests = [];
     this._spawnChests(3, TEXTURES.CLOVER);
+    this._spawnHoles();
+    this._spawnGhosts();
 
     const { x, y } = Helper.createRandomCoords(this);
     this.player = new Player(this, x, y, TEXTURES.UNKNOWN, 0);
     this.player.play(TEXTURES.UNKNOWN);
     this.player.setCircle(14, 2, 2);
 
-    this.physics.add.collider(
-      this.player,
-      this.holes,
-      this._onCollisionPlayerHole,
-      null,
-      this,
-    );
-    this.physics.add.collider(
-      this.player,
-      this.ghosts,
-      this._onCollisionPlayerGhost,
-      null,
-      this,
-    );
+    this._addCollider();
     this.textLifes = this.add.text(10, 0, `Lifes: ${this.lifes}`, {
       fontFamily: 'BitPotion',
       color: '#fff',
@@ -95,6 +85,7 @@ export default class SceneGame extends Phaser.Scene {
     this.keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
     this.keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
     this.keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
+    this.keyE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E);
   }
 
   _movePlayer() {
@@ -133,6 +124,30 @@ export default class SceneGame extends Phaser.Scene {
       frameRate: 10,
       repeat: -1, // -1: infinity
     });
+  }
+
+  _addCollider() {
+    this.physics.add.collider(
+      this.player,
+      this.holes,
+      this._onCollisionPlayerHole,
+      null,
+      this,
+    );
+    this.physics.add.collider(
+      this.player,
+      this.ghosts,
+      this._onCollisionPlayerGhost,
+      null,
+      this,
+    );
+    this.physics.add.collider(
+      this.player,
+      this.chests,
+      this._onCollisionPlayerChest,
+      null,
+      this,
+    );
   }
 
   _spawnHoles() {
@@ -199,12 +214,32 @@ export default class SceneGame extends Phaser.Scene {
       const { x, y } = Helper.createRandomCoords(this);
       if (index == 0) {
         // Only one chest contains the item
-        const chest = new Chest(this, x, y, TEXTURES.CHEST_CLOSED, sItem);
+        const chest = new Chest(
+          this,
+          x,
+          y,
+          TEXTURES.CHEST_CLOSED,
+          TEXTURES.CHEST_OPEN,
+          sItem,
+        );
         this.chests.push(chest);
       } else {
-        const chest = new Chest(this, x, y, TEXTURES.CHEST_CLOSED);
+        const chest = new Chest(
+          this,
+          x,
+          y,
+          TEXTURES.CHEST_CLOSED,
+          TEXTURES.CHEST_OPEN,
+        );
         this.chests.push(chest);
       }
+    }
+  }
+
+  _onCollisionPlayerChest(player, chest) {
+    // open if colliding an action button is pressed
+    if (this.keyE.isDown) {
+      chest.open();
     }
   }
 
