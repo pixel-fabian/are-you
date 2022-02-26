@@ -10,8 +10,8 @@ export default class Helper {
     const width = scene.scale.width;
     const height = scene.scale.height;
 
-    const x = Phaser.Math.Between(0, width - 16);
-    const y = Phaser.Math.Between(0, height - 16);
+    const x = Phaser.Math.Between(16, width - 16);
+    const y = Phaser.Math.Between(16, height - 16);
 
     return { x, y };
   }

@@ -259,6 +259,15 @@ export default class SceneGame extends Phaser.Scene {
       frameRate: 5,
       repeat: -1, // -1: infinity
     });
+    this.anims.create({
+      key: TEXTURES.PORTAL,
+      frames: this.anims.generateFrameNumbers(TEXTURES.PORTAL, {
+        start: 0,
+        end: 15,
+      }),
+      frameRate: 10,
+      repeat: -1, // -1: infinity
+    });
   }
 
   _addCollider() {
@@ -372,6 +381,7 @@ export default class SceneGame extends Phaser.Scene {
     const { x, y } = Helper.createRandomCoords(this);
     this.portal = this.physics.add.sprite(x, y, TEXTURES.PORTAL);
     this.portal.setImmovable(true);
+    this.portal.play(TEXTURES.PORTAL);
     this.physics.add.collider(
       this.player,
       this.portal,
