@@ -27,6 +27,7 @@ export default class SceneGame extends Phaser.Scene {
   private photos?: NPCGroup;
   private chests: Chest[] = [];
   private items: Item[] = [];
+  private portal?: Phaser.Physics.Arcade.Sprite;
   private soundDeath?: Phaser.Sound.BaseSound;
   private soundPickup?: Phaser.Sound.BaseSound;
   private soundTakedamage?: Phaser.Sound.BaseSound;
@@ -367,6 +368,19 @@ export default class SceneGame extends Phaser.Scene {
     });
   }
 
+  _spawnPortal() {
+    const { x, y } = Helper.createRandomCoords(this);
+    this.portal = this.physics.add.sprite(x, y, TEXTURES.PORTAL);
+    this.portal.setImmovable(true);
+    this.physics.add.collider(
+      this.player,
+      this.portal,
+      this._onCollisionPlayerPortal,
+      null,
+      this,
+    );
+  }
+
   _spawnChests(nQuantity, sItem) {
     for (let index = 0; index < nQuantity; index++) {
       const { x, y } = Helper.createRandomCoords(this);
@@ -492,6 +506,10 @@ export default class SceneGame extends Phaser.Scene {
     if (this.keyE.isDown || this.keyQ.isDown) {
       chest.open(this);
     }
+  }
+
+  _onCollisionPlayerPortal() {
+    this.scene.start(SCENES.WINNING);
   }
 
   _onCollisionPlayerItem(player, item) {
@@ -641,6 +659,9 @@ export default class SceneGame extends Phaser.Scene {
     context.cameras.main.zoomTo(1, 700, 'Sine.easeOut');
     context.cameras.main.stopFollow();
     context.cameras.main.setScroll(0);
+    if (context.photosCollected == 3) {
+      context._spawnPortal();
+    }
     // context.holes.resume();
     // context.ghosts.resume();
     // context.books.resume();

@@ -4,6 +4,7 @@ import SceneMenu from './scenes/sceneMenu';
 import SceneGame from './scenes/sceneGame';
 import SceneCollection from './scenes/sceneCollection';
 import SceneCredits from './scenes/sceneCredits';
+import SceneWinning from './scenes/sceneWinning';
 
 const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO, // WebGL if available
@@ -11,7 +12,14 @@ const config: Phaser.Types.Core.GameConfig = {
   width: 800,
   height: 640,
   parent: 'game',
-  scene: [SceneLoad, SceneMenu, SceneGame, SceneCollection, SceneCredits],
+  scene: [
+    SceneLoad,
+    SceneMenu,
+    SceneGame,
+    SceneCollection,
+    SceneCredits,
+    SceneWinning,
+  ],
   render: {
     pixelArt: true,
   },
