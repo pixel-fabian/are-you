@@ -200,6 +200,15 @@ export default class SceneGame extends Phaser.Scene {
       frameRate: 10,
       repeat: -1, // -1: infinity
     });
+    this.anims.create({
+      key: TEXTURES.OLDONE,
+      frames: this.anims.generateFrameNumbers(TEXTURES.OLDONE, {
+        start: 0,
+        end: 1,
+      }),
+      frameRate: 5,
+      repeat: -1, // -1: infinity
+    });
   }
 
   _addCollider() {
