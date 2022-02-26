@@ -291,7 +291,7 @@ export default class SceneGame extends Phaser.Scene {
 
   _spawnOldones() {
     this.oldones = new NPCGroup(this.physics.world, this, {
-      known: this.knownElements.ghosts,
+      known: this.knownElements.oldones,
       knownTexture: TEXTURES.OLDONE,
       knownMoving: true,
       minQuantity: 3,
@@ -327,8 +327,11 @@ export default class SceneGame extends Phaser.Scene {
     }
   }
 
-  _onCollisionPlayerGhost(player, ghost) {
-    // collide only if no ongoing collision and player is not moving
+  _onCollisionPlayerGhost(
+    player: Phaser.Physics.Arcade.Sprite,
+    ghost: Phaser.Physics.Arcade.Sprite,
+  ) {
+    // collide only if no ongoing collision and player is moving
     if (
       this.collision ||
       (player.body.velocity.x == 0 && player.body.velocity.y == 0)
@@ -347,7 +350,7 @@ export default class SceneGame extends Phaser.Scene {
     player: Phaser.Physics.Arcade.Sprite,
     hole: Phaser.Physics.Arcade.Sprite,
   ) {
-    // collide only if no ongoing collision and player is not moving
+    // collide only if no ongoing collision and player is moving
     if (
       this.collision ||
       (player.body.velocity.x == 0 && player.body.velocity.y == 0)
@@ -364,8 +367,11 @@ export default class SceneGame extends Phaser.Scene {
     }
   }
 
-  _onCollisionPlayerOldone(player, oldone) {
-    // collide only if no ongoing collision and player is not moving
+  _onCollisionPlayerOldone(
+    player: Phaser.Physics.Arcade.Sprite,
+    oldone: Phaser.Physics.Arcade.Sprite,
+  ) {
+    // collide only if no ongoing collision and player is moving
     if (
       this.collision ||
       (player.body.velocity.x == 0 && player.body.velocity.y == 0)
@@ -380,7 +386,10 @@ export default class SceneGame extends Phaser.Scene {
     }
   }
 
-  _onCollisionPlayerBook(player, book) {
+  _onCollisionPlayerBook(
+    player: Phaser.Physics.Arcade.Sprite,
+    book: Phaser.Physics.Arcade.Sprite,
+  ) {
     // collide only if no ongoing collision and player is not moving
     if (
       this.collision ||
@@ -388,8 +397,8 @@ export default class SceneGame extends Phaser.Scene {
     )
       return;
     // collision is happening:
-    this.collision = true;
     if (!this.knownElements.books) {
+      this.collision = true;
       this.knownElements.books = true;
       this._zoomEffect(book);
     }
