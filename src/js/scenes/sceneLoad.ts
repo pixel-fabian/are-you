@@ -61,6 +61,9 @@ export default class SceneLoad extends Phaser.Scene {
     this.load.image(TEXTURES.HOLE, 'assets/sprites/spr_hole.png');
     // load audio
     this.load.audio(AUDIO.DEATH, ['assets/sfx/death.wav']);
+    this.load.audio(AUDIO.OPEN, ['assets/sfx/open.wav']);
+    this.load.audio(AUDIO.PICKUP, ['assets/sfx/pickup.wav']);
+    //this.load.audio(AUDIO.TAKEDAMAGE['assets/sfx/takedamage.wav']);
   }
 
   create(): void {
