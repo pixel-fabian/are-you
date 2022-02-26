@@ -29,7 +29,17 @@ export default class SceneMenu extends Phaser.Scene {
         fontSize: '92px',
       })
       .setOrigin(0.5);
-    this.add.text(20, 600, 'Controls: WASD', {
+    this.add.text(20, 560, 'Controls:', {
+      fontFamily: 'BitPotion',
+      color: '#fff',
+      fontSize: '28px',
+    });
+    this.add.text(20, 580, 'walk: WASD', {
+      fontFamily: 'BitPotion',
+      color: '#fff',
+      fontSize: '28px',
+    });
+    this.add.text(20, 600, 'interact: E or Q', {
       fontFamily: 'BitPotion',
       color: '#fff',
       fontSize: '28px',

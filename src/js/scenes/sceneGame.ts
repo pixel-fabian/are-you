@@ -14,6 +14,7 @@ export default class SceneGame extends Phaser.Scene {
   private keyS: Phaser.Input.Keyboard.Key;
   private keyD: Phaser.Input.Keyboard.Key;
   private keyE: Phaser.Input.Keyboard.Key;
+  private keyQ: Phaser.Input.Keyboard.Key;
   private velocity: number = 90;
   private lifes: number = 3;
   private pauseMovement: boolean = false;
@@ -78,7 +79,7 @@ export default class SceneGame extends Phaser.Scene {
     this._movePlayer();
 
     if (!this.pauseMovement) {
-      if (this.keyE.isDown) {
+      if (this.keyE.isDown || this.keyQ.isDown) {
         this.player.useClover(this);
       }
       this.player.updateCloverPosition();
@@ -103,6 +104,7 @@ export default class SceneGame extends Phaser.Scene {
     this.keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
     this.keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
     this.keyE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E);
+    this.keyQ = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Q);
   }
 
   _movePlayer() {
@@ -262,7 +264,7 @@ export default class SceneGame extends Phaser.Scene {
 
   _onCollisionPlayerChest(player, chest) {
     // open if colliding an action button is pressed
-    if (this.keyE.isDown) {
+    if (this.keyE.isDown || this.keyQ.isDown) {
       chest.open(this);
     }
   }
