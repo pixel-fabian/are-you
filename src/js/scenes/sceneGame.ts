@@ -55,6 +55,7 @@ export default class SceneGame extends Phaser.Scene {
     // soft reset to continue game
     this.pauseMovement = false;
     this.collision = false;
+    this.pickup = false;
     // hard reset after death
     if (!data.knownElements) {
       this.knownElements = {
