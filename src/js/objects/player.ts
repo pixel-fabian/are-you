@@ -11,5 +11,6 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     scene.physics.add.existing(this);
     this.setCollideWorldBounds(true);
     this.setImmovable(true);
+    this.setDepth(100);
   }
 }

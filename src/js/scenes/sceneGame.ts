@@ -14,14 +14,14 @@ export default class SceneGame extends Phaser.Scene {
   private keyS: Phaser.Input.Keyboard.Key;
   private keyD: Phaser.Input.Keyboard.Key;
   private keyE: Phaser.Input.Keyboard.Key;
-  private velocity = 90;
-  private lifes = 3;
-  private pauseMovement = false;
+  private velocity: number = 90;
+  private lifes: number = 3;
+  private pauseMovement: boolean = false;
   private player?: Player;
   private holes?: Enemies;
   private ghosts?: Enemies;
-  private chests?: Chest[];
-  private items?: Item[];
+  private chests: Chest[] = [];
+  private items: Item[] = [];
   private soundDeath?: Phaser.Sound.BaseSound;
   private textAreYou?: Phaser.GameObjects.Text;
   private textLifes?: Phaser.GameObjects.Text;
@@ -53,7 +53,6 @@ export default class SceneGame extends Phaser.Scene {
     Helper.createFloor(this, TEXTURES.FLOOR);
     this._createAnimations();
     this._createControls();
-    this.chests = [];
     this._spawnChests(3, TEXTURES.CLOVER);
     this._spawnHoles();
     this._spawnGhosts();
@@ -239,7 +238,7 @@ export default class SceneGame extends Phaser.Scene {
   _onCollisionPlayerChest(player, chest) {
     // open if colliding an action button is pressed
     if (this.keyE.isDown) {
-      chest.open();
+      chest.open(this);
     }
   }
 

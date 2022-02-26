@@ -81,6 +81,7 @@ export default class Enemies extends Phaser.Physics.Arcade.Group {
       enemy.setBounceY(1);
       enemy.setCollideWorldBounds(true);
       enemy.setImmovable(true);
+      enemy.setDepth(90);
       enemy.revealTexture = this._revealTexture.bind(this);
       if (sTextureKey === TEXTURES.HOLE || sTextureKey === TEXTURES.UNKNOWN) {
         enemy.setCircle(14, 2, 2);

@@ -1,4 +1,5 @@
 import AUDIO from '../constants/AudioKeys';
+import Item from '../objects/item';
 
 export default class Chest extends Phaser.Physics.Arcade.Sprite {
   /**
@@ -48,11 +49,14 @@ export default class Chest extends Phaser.Physics.Arcade.Sprite {
     }
   }
 
-  open() {
+  open(scene) {
     if (this.opened) return;
     this.soundOpen.play();
     this.opened = true;
-    console.log('open chest', this.item);
     this.setTexture(this.textureOpen);
+    const spawnX = this.x + Phaser.Math.Between(-20, 20);
+    const spawnY = this.y + Phaser.Math.Between(-20, 20);
+    const newItem = new Item(scene, spawnX, spawnY, this.item);
+    scene.items.push(newItem);
   }
 }
