@@ -70,16 +70,18 @@ export default class SceneGame extends Phaser.Scene {
     }
   }
 
-  preload(): void {}
+  preload(): void {
+    this._createUnknownSprite();
+  }
 
   create(): void {
     Helper.createFloor(this, TEXTURES.FLOOR);
     this._createAnimations();
     this._createControls();
     this._spawnChests(3, TEXTURES.CLOVER);
+    this._spawnBooks();
     this._spawnHoles();
     this._spawnGhosts();
-    this._spawnBooks();
     this._spawnOldones();
 
     const { x, y } = Helper.createRandomCoords(this);
@@ -129,6 +131,30 @@ export default class SceneGame extends Phaser.Scene {
   // Private methods                              //
   //////////////////////////////////////////////////
 
+  _createUnknownSprite() {
+    const head = this._rndChar();
+    const item = this._rndChar();
+    const foot = this._rndChar();
+    const sSprite = `assets/sprites/spr_${head}${item}${foot}.png`;
+
+    this.load.spritesheet(TEXTURES.UNKNOWN, sSprite, {
+      frameWidth: 32,
+      frameHeight: 32,
+    });
+  }
+
+  _rndChar() {
+    const nNumber = Phaser.Math.Between(1, 3);
+    switch (nNumber) {
+      case 1:
+        return 'h';
+      case 2:
+        return 'd';
+      case 3:
+        return 'o';
+    }
+  }
+
   _createControls() {
     this.keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
     this.keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
@@ -160,9 +186,9 @@ export default class SceneGame extends Phaser.Scene {
       key: TEXTURES.UNKNOWN,
       frames: this.anims.generateFrameNumbers(TEXTURES.UNKNOWN, {
         start: 0,
-        end: 6,
+        end: 1,
       }),
-      frameRate: 10,
+      frameRate: 5,
       repeat: -1, // -1: infinity
     });
     this.anims.create({

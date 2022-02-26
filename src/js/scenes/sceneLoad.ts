@@ -33,14 +33,6 @@ export default class SceneLoad extends Phaser.Scene {
     });
 
     // load spritesheets
-    this.load.spritesheet(
-      TEXTURES.UNKNOWN,
-      'assets/sprites/spr_pixelhaufen.png',
-      {
-        frameWidth: 32,
-        frameHeight: 32,
-      },
-    );
     this.load.spritesheet(TEXTURES.GHOST, 'assets/sprites/spr_ghost.png', {
       frameWidth: 32,
       frameHeight: 32,
@@ -49,11 +41,43 @@ export default class SceneLoad extends Phaser.Scene {
       frameWidth: 32,
       frameHeight: 32,
     });
-    this.load.spritesheet(TEXTURES.PHOTO, 'assets/sprites/spr_photo.png', {
+    this.load.spritesheet(
+      TEXTURES.PHOTO_D,
+      'assets/sprites/spr_photo_deepone.png',
+      {
+        frameWidth: 32,
+        frameHeight: 32,
+      },
+    );
+    this.load.spritesheet(
+      TEXTURES.PHOTO_H,
+      'assets/sprites/spr_photo_human.png',
+      {
+        frameWidth: 32,
+        frameHeight: 32,
+      },
+    );
+    this.load.spritesheet(
+      TEXTURES.PHOTO_O,
+      'assets/sprites/spr_photo_oldone.png',
+      {
+        frameWidth: 32,
+        frameHeight: 32,
+      },
+    );
+    this.load.spritesheet(TEXTURES.PORTAL, 'assets/sprites/spr_portal.png', {
       frameWidth: 32,
       frameHeight: 32,
     });
-    this.load.spritesheet(TEXTURES.PORTAL, 'assets/sprites/spr_portal.png', {
+    this.load.spritesheet(TEXTURES.PLAYER_DDD, 'assets/sprites/spr_ddd.png', {
+      frameWidth: 32,
+      frameHeight: 32,
+    });
+    this.load.spritesheet(TEXTURES.PLAYER_HHH, 'assets/sprites/spr_hhh.png', {
+      frameWidth: 32,
+      frameHeight: 32,
+    });
+    this.load.spritesheet(TEXTURES.PLAYER_OOO, 'assets/sprites/spr_ooo.png', {
       frameWidth: 32,
       frameHeight: 32,
     });

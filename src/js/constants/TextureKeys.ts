@@ -8,9 +8,14 @@ enum TEXTURES {
   GHOST = 'ghost',
   HOLE = 'hole',
   OLDONE = 'oldone',
-  PHOTO = 'photo',
+  PHOTO_D = 'photo_deepone',
+  PHOTO_H = 'photo_human',
+  PHOTO_O = 'photo_oldone',
+  PLAYER_DDD = 'player_ooo',
+  PLAYER_HHH = 'player_hhh',
+  PLAYER_OOO = 'player_ooo',
   PORTAL = 'portal',
-  UNKNOWN = 'pixelheap',
+  UNKNOWN = 'unknown',
 }
 
 export default TEXTURES;
