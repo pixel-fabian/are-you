@@ -325,8 +325,6 @@ export default class SceneGame extends Phaser.Scene {
       known: this.knownElements.holes,
       knownTexture: TEXTURES.HOLE,
       knownMoving: false,
-      minQuantity: 5,
-      maxQuantity: 12,
       velocity: this.velocity,
     });
   }
@@ -336,8 +334,6 @@ export default class SceneGame extends Phaser.Scene {
       known: this.knownElements.ghosts,
       knownTexture: TEXTURES.GHOST,
       knownMoving: true,
-      minQuantity: 5,
-      maxQuantity: 12,
       velocity: this.velocity,
     });
   }
@@ -347,8 +343,6 @@ export default class SceneGame extends Phaser.Scene {
       known: this.knownElements.books,
       knownTexture: TEXTURES.BOOKS,
       knownMoving: false,
-      minQuantity: 5,
-      maxQuantity: 12,
       velocity: this.velocity,
     });
   }
@@ -358,8 +352,6 @@ export default class SceneGame extends Phaser.Scene {
       known: this.knownElements.oldones,
       knownTexture: TEXTURES.OLDONE,
       knownMoving: true,
-      minQuantity: 3,
-      maxQuantity: 7,
       velocity: this.velocity,
     });
   }
