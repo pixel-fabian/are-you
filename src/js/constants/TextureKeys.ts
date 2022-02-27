@@ -11,9 +11,9 @@ enum TEXTURES {
   PHOTO_D = 'photo_deepone',
   PHOTO_H = 'photo_human',
   PHOTO_O = 'photo_oldone',
-  PLAYER_DDD = 'player_ooo',
-  PLAYER_HHH = 'player_hhh',
-  PLAYER_OOO = 'player_ooo',
+  PLAYER_1 = 'player_1',
+  PLAYER_2 = 'player_2',
+  PLAYER_3 = 'player_3',
   PORTAL = 'portal',
   UNKNOWN = 'unknown',
 }

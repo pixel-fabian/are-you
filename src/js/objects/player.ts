@@ -102,6 +102,30 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     }
   }
 
+  changeTexture(nNumber: 1 | 2 | 3) {
+    this.stop();
+    switch (nNumber) {
+      case 1:
+        this.setTexture(TEXTURES.PLAYER_1);
+        if (this.scene.anims.exists(TEXTURES.PLAYER_1)) {
+          this.play(TEXTURES.PLAYER_1);
+        }
+        break;
+      case 2:
+        this.setTexture(TEXTURES.PLAYER_2);
+        if (this.scene.anims.exists(TEXTURES.PLAYER_2)) {
+          this.play(TEXTURES.PLAYER_2);
+        }
+        break;
+      case 3:
+        this.setTexture(TEXTURES.PLAYER_3);
+        if (this.scene.anims.exists(TEXTURES.PLAYER_3)) {
+          this.play(TEXTURES.PLAYER_3);
+        }
+        break;
+    }
+  }
+
   _countDownCirclePower(duration) {
     this.scene.time.addEvent({
       callback: () => {

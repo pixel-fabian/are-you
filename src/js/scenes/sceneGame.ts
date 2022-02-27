@@ -75,20 +75,18 @@ export default class SceneGame extends Phaser.Scene {
     }
   }
 
-  preload(): void {
-    this._createUnknownSprite();
-  }
+  preload(): void {}
 
   create(): void {
     Helper.createFloor(this, TEXTURES.FLOOR);
     this._createAnimations();
     this._createControls();
     this._spawnChests(3, TEXTURES.CLOVER);
-    this._spawnBooks();
+    // this._spawnBooks();
     this._spawnPhotos();
-    this._spawnHoles();
-    this._spawnGhosts();
-    this._spawnOldones();
+    // this._spawnHoles();
+    // this._spawnGhosts();
+    // this._spawnOldones();
 
     const { x, y } = Helper.createRandomCoords(this);
     this.player = new Player(this, x, y, TEXTURES.UNKNOWN, 0);
@@ -151,33 +149,6 @@ export default class SceneGame extends Phaser.Scene {
   // Private methods                              //
   //////////////////////////////////////////////////
 
-  _createUnknownSprite() {
-    const head = this._rndChar();
-    const item = this._rndChar();
-    let body = this._rndChar();
-    while (body === item && body === head) {
-      body = this._rndChar();
-    }
-    const sSprite = `assets/sprites/spr_${head}${item}${body}.png`;
-
-    this.load.spritesheet(TEXTURES.UNKNOWN, sSprite, {
-      frameWidth: 32,
-      frameHeight: 32,
-    });
-  }
-
-  _rndChar() {
-    const nNumber = Phaser.Math.Between(1, 3);
-    switch (nNumber) {
-      case 1:
-        return 'h';
-      case 2:
-        return 'd';
-      case 3:
-        return 'o';
-    }
-  }
-
   _createControls() {
     this.keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
     this.keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
@@ -208,6 +179,33 @@ export default class SceneGame extends Phaser.Scene {
     this.anims.create({
       key: TEXTURES.UNKNOWN,
       frames: this.anims.generateFrameNumbers(TEXTURES.UNKNOWN, {
+        start: 0,
+        end: 1,
+      }),
+      frameRate: 5,
+      repeat: -1, // -1: infinity
+    });
+    this.anims.create({
+      key: TEXTURES.PLAYER_1,
+      frames: this.anims.generateFrameNumbers(TEXTURES.PLAYER_1, {
+        start: 0,
+        end: 1,
+      }),
+      frameRate: 5,
+      repeat: -1, // -1: infinity
+    });
+    this.anims.create({
+      key: TEXTURES.PLAYER_2,
+      frames: this.anims.generateFrameNumbers(TEXTURES.PLAYER_2, {
+        start: 0,
+        end: 1,
+      }),
+      frameRate: 5,
+      repeat: -1, // -1: infinity
+    });
+    this.anims.create({
+      key: TEXTURES.PLAYER_3,
+      frames: this.anims.generateFrameNumbers(TEXTURES.PLAYER_3, {
         start: 0,
         end: 1,
       }),
@@ -561,10 +559,10 @@ export default class SceneGame extends Phaser.Scene {
     const bGameOver = this.lifes <= 0 ? true : false;
     this.soundDeath.play();
     this.pauseMovement = true;
-    this.holes.stop();
-    this.ghosts.stop();
-    this.books.stop();
-    this.oldones.stop();
+    // this.holes.stop();
+    // this.ghosts.stop();
+    // this.books.stop();
+    // this.oldones.stop();
     this.photos.stop();
     this.cameras.main.zoomTo(1.5, 700, 'Sine.easeOut');
     this.cameras.main.startFollow(this.player);
@@ -613,6 +611,14 @@ export default class SceneGame extends Phaser.Scene {
             delay: 1600,
             callback: () => {
               this._pickupItem(element);
+              if (this.photosCollected == 1) {
+                this.player.changeTexture(1);
+              } else if (this.photosCollected == 2) {
+                this.player.changeTexture(2);
+              } else if (this.photosCollected == 3) {
+                this.player.changeTexture(3);
+                this._spawnPortal();
+              }
               this.buttonContinue = Helper.createTextButton(
                 this,
                 this.player.x,
@@ -669,14 +675,12 @@ export default class SceneGame extends Phaser.Scene {
     context.cameras.main.zoomTo(1, 700, 'Sine.easeOut');
     context.cameras.main.stopFollow();
     context.cameras.main.setScroll(0);
-    if (context.photosCollected == 3) {
-      context._spawnPortal();
-    }
-    context.holes.resume();
-    context.ghosts.resume();
-    context.books.resume();
-    context.oldones.resume();
-    context.photos.resume();
+
+    // context.holes.resume();
+    // context.ghosts.resume();
+    // context.books.resume();
+    // context.oldones.resume();
+    // context.photos.resume();
   }
   _toMenu(context) {
     context.scene.start(SCENES.MENU);

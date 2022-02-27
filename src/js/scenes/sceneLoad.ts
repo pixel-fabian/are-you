@@ -69,18 +69,8 @@ export default class SceneLoad extends Phaser.Scene {
       frameWidth: 32,
       frameHeight: 32,
     });
-    this.load.spritesheet(TEXTURES.PLAYER_DDD, 'assets/sprites/spr_ddd.png', {
-      frameWidth: 32,
-      frameHeight: 32,
-    });
-    this.load.spritesheet(TEXTURES.PLAYER_HHH, 'assets/sprites/spr_hhh.png', {
-      frameWidth: 32,
-      frameHeight: 32,
-    });
-    this.load.spritesheet(TEXTURES.PLAYER_OOO, 'assets/sprites/spr_ooo.png', {
-      frameWidth: 32,
-      frameHeight: 32,
-    });
+    this._createUnknownSprite();
+    this._createPlayerSprites();
     // load images
     this.load.image(TEXTURES.BOOKS, 'assets/sprites/spr_books.png');
     this.load.image(
@@ -121,5 +111,67 @@ export default class SceneLoad extends Phaser.Scene {
       },
     });
     return loadingBar;
+  }
+
+  _createUnknownSprite() {
+    const head = this._rndChar();
+    let item = this._rndChar();
+    let body = this._rndChar();
+    while (item == head) {
+      item = this._rndChar();
+    }
+    while (body == item || body == head) {
+      body = this._rndChar();
+    }
+    const sSprite = `assets/sprites/spr_${head}${body}${item}.png`;
+
+    this.load.spritesheet(TEXTURES.UNKNOWN, sSprite, {
+      frameWidth: 32,
+      frameHeight: 32,
+    });
+  }
+
+  _createPlayerSprites() {
+    const headFinal = this._rndChar();
+    let itemRandom = this._rndChar();
+    let bodyRandom = this._rndChar();
+    while (itemRandom == headFinal) {
+      itemRandom = this._rndChar();
+    }
+    while (bodyRandom == itemRandom || bodyRandom == headFinal) {
+      bodyRandom = this._rndChar();
+    }
+    const sSprite_1 = `assets/sprites/spr_${headFinal}${bodyRandom}${itemRandom}.png`;
+
+    const itemFinal = headFinal;
+    const sSprite_2 = `assets/sprites/spr_${headFinal}${bodyRandom}${itemFinal}.png`;
+
+    const bodyFinal = headFinal;
+    const sSprite_3 = `assets/sprites/spr_${headFinal}${bodyFinal}${itemFinal}.png`;
+
+    this.load.spritesheet(TEXTURES.PLAYER_1, sSprite_1, {
+      frameWidth: 32,
+      frameHeight: 32,
+    });
+    this.load.spritesheet(TEXTURES.PLAYER_2, sSprite_2, {
+      frameWidth: 32,
+      frameHeight: 32,
+    });
+    this.load.spritesheet(TEXTURES.PLAYER_3, sSprite_3, {
+      frameWidth: 32,
+      frameHeight: 32,
+    });
+  }
+
+  _rndChar() {
+    const nNumber = Phaser.Math.Between(1, 3);
+    switch (nNumber) {
+      case 1:
+        return 'h';
+      case 2:
+        return 'd';
+      case 3:
+        return 'o';
+    }
   }
 }
