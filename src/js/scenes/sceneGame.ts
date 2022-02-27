@@ -60,6 +60,7 @@ export default class SceneGame extends Phaser.Scene {
     this.pauseMovement = false;
     this.collision = false;
     this.pickup = false;
+    this.photosCollected = 0;
     // hard reset after death
     if (!data.knownElements) {
       this.knownElements = {
