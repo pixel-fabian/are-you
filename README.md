@@ -6,24 +6,32 @@
 
 ---
 
-A small game created during [Brackeys Game Jam 2022.1](https://itch.io/jam/brackeys-7)
+... in the attic? in the cellar? You just don't know. And what's there, in your face? And what are all those other... where? This ... what? This is not real! What are those? What are you?
+
+You need to orient yourself. You need to find out. Things are not what they seem. You should stand still, just for a bit, before trying to move.
+
+A game by: lupercalia & pixel-fabian
+
+Created during [Brackeys Game Jam 2022.1](https://itch.io/jam/brackeys-7)
+
+Build with [phaser 3](https://phaser.io/)
 
 ## Play
 
 > Play on [itch.io](https://pixel-fabian.itch.io/are-you)
 
-Controls:
+### Controls:
 
 - move: WASD
 - interact: E or Q
 
-## Credits
+### Survival hints
 
-- A game by: lupercalia & pixel-fabian
-- Game engine: Phaser 3 by photonstorm
-- Font: BitPotion by Joeb Rogers (CC-BY)
+Don't move for now! Start slow. Be sure!
 
 ## License
+
+### Code
 
 Are you? - A browser game -
 Copyright (C) 2022 pixel-fabian & lupercalia
@@ -40,3 +48,7 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program. If not, see <https://www.gnu.org/licenses/>.
+
+### Assets
+
+- Font: BitPotion by Joeb Rogers (CC-BY)
