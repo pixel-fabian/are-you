@@ -55,12 +55,12 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     this.circlePowerClover.body.setCircle(70);
     this.circlePowerClover.body.setImmovable(true);
     this.scene.time.addEvent({
-      delay: 5000,
+      delay: 6000,
       callback: () => {
         this.usePowerClover = false;
         this.circlePowerClover.destroy(this.scene);
         this.iconPowerClover.setStrokeStyle(2, 0x666666);
-        this.timerPowerClover = 10;
+        this.timerPowerClover = 8;
         this._countDownCirclePower(this.timerPowerClover);
       },
       loop: false,

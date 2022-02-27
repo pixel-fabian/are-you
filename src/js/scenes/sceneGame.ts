@@ -93,7 +93,6 @@ export default class SceneGame extends Phaser.Scene {
     this.player = new Player(this, x, y, TEXTURES.UNKNOWN, 0);
     this.player.play(TEXTURES.UNKNOWN);
     this.player.setCircle(14, 2, 2);
-    this.player.setPower(TEXTURES.CLOVER);
 
     this._addCollider();
     this.textLifes = this.add.text(10, 0, `Lifes: ${this.lifes}`, {
@@ -128,28 +127,22 @@ export default class SceneGame extends Phaser.Scene {
   }
 
   onCollisionCircleGhosts(circle, ghost) {
-    console.log('reveal ghost');
     this.ghosts.tmpReveal(ghost);
   }
 
   onCollisionCircleHoles(circle, hole) {
-    console.log('reveal hole');
     this.holes.tmpReveal(hole);
   }
 
   onCollisionCircleBooks(circle, book) {
-    console.log('reveal book');
     this.books.tmpReveal(book);
   }
 
   onCollisionCircleOldones(circle, oldone) {
-    console.log('reveal oldone');
     this.oldones.tmpReveal(oldone);
   }
 
   onCollisionCirclePhotos(circle, photo) {
-    console.log('reveal photo');
-
     this.photos.tmpReveal(photo);
   }
 

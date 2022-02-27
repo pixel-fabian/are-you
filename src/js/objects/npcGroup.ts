@@ -40,7 +40,7 @@ export default class NPCGroup extends Phaser.Physics.Arcade.Group {
     known: false,
     knownTexture: TEXTURES.UNKNOWN,
     knownMoving: false,
-    minQuantity: 5,
+    minQuantity: 4,
     maxQuantity: 8,
     velocity: 100,
   };
@@ -133,6 +133,7 @@ export default class NPCGroup extends Phaser.Physics.Arcade.Group {
   }
 
   _revealTexture(npc: Phaser.Physics.Arcade.Sprite) {
+    npc['revealed'] = true;
     npc.stop();
 
     if (npc['knownTexture']) {
@@ -166,15 +167,17 @@ export default class NPCGroup extends Phaser.Physics.Arcade.Group {
           npc.play(this.npcConfig.knownTexture);
         }
       }
+      this.scene.time.addEvent({
+        delay: 2000,
+        callback: () => {
+          if (!npc['revealed']) {
+            npc.setTexture(TEXTURES.UNKNOWN);
+            npc.play(TEXTURES.UNKNOWN);
+          }
+        },
+        loop: false,
+      });
     }
-    this.scene.time.addEvent({
-      delay: 2000,
-      callback: () => {
-        npc.setTexture(TEXTURES.UNKNOWN);
-        npc.play(TEXTURES.UNKNOWN);
-      },
-      loop: false,
-    });
   }
 
   setDifferentTextures(aTextures = []) {
