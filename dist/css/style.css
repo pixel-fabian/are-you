@@ -1,6 +1,7 @@
 body {
   background: #333;
   font-family: sans-serif;
+  margin: 0;
 }
 
 .wrapper {
@@ -12,4 +13,5 @@ body {
 
 #game canvas {
   max-width: 100%;
+  border: 2px solid #595757;
 }
