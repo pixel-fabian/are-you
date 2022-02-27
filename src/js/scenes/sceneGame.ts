@@ -82,11 +82,11 @@ export default class SceneGame extends Phaser.Scene {
     this._createAnimations();
     this._createControls();
     this._spawnChests(3, TEXTURES.CLOVER);
-    // this._spawnBooks();
+    this._spawnBooks();
     this._spawnPhotos();
-    // this._spawnHoles();
-    // this._spawnGhosts();
-    // this._spawnOldones();
+    this._spawnHoles();
+    this._spawnGhosts();
+    this._spawnOldones();
 
     const { x, y } = Helper.createRandomCoords(this);
     this.player = new Player(this, x, y, TEXTURES.UNKNOWN, 0);
@@ -564,10 +564,10 @@ export default class SceneGame extends Phaser.Scene {
     const bGameOver = this.lifes <= 0 ? true : false;
     this.soundDeath.play();
     this.pauseMovement = true;
-    // this.holes.stop();
-    // this.ghosts.stop();
-    // this.books.stop();
-    // this.oldones.stop();
+    this.holes.stop();
+    this.ghosts.stop();
+    this.books.stop();
+    this.oldones.stop();
     this.photos.stop();
     this.cameras.main.zoomTo(1.5, 700, 'Sine.easeOut');
     this.cameras.main.startFollow(this.player);
@@ -681,11 +681,11 @@ export default class SceneGame extends Phaser.Scene {
     context.cameras.main.stopFollow();
     context.cameras.main.setScroll(0);
 
-    // context.holes.resume();
-    // context.ghosts.resume();
-    // context.books.resume();
-    // context.oldones.resume();
-    // context.photos.resume();
+    context.holes.resume();
+    context.ghosts.resume();
+    context.books.resume();
+    context.oldones.resume();
+    context.photos.resume();
   }
   _toMenu(context) {
     context.scene.start(SCENES.MENU);
