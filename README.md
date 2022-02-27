@@ -29,7 +29,9 @@ Build with [phaser 3](https://phaser.io/)
 
 ### Survival hints
 
-Don't move for now! Start slow. Be sure!
+- Don't move for now! Start slow. Be sure!
+- Find the clover, u will need luck!
+- Collect all 3 photos to uncover who you are.
 
 ## License
 
@@ -53,4 +55,5 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 ### Assets
 
+- Sprites and sound effects: CC-BY-SA 4.0
 - Font: BitPotion by Joeb Rogers (CC-BY)
