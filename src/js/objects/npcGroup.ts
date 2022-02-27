@@ -14,6 +14,10 @@ type npcConfig = {
    */
   knownTexture?: string;
   /**
+   * Textures to display when type is known
+   */
+  knownTextures?: Array<string>;
+  /**
    * Moving if type is known
    */
   knownMoving?: boolean;
@@ -130,18 +134,37 @@ export default class NPCGroup extends Phaser.Physics.Arcade.Group {
 
   _revealTexture(npc: Phaser.Physics.Arcade.Sprite) {
     npc.stop();
-    npc.setTexture(this.npcConfig.knownTexture);
-    if (this.scene.anims.exists(this.npcConfig.knownTexture)) {
-      npc.play(this.npcConfig.knownTexture);
+
+    if (npc['knownTexture']) {
+      // if child has knownTexture use this
+      npc.setTexture(npc['knownTexture']);
+      if (this.scene.anims.exists(npc['knownTexture'])) {
+        npc.play(npc['knownTexture']);
+      }
+    } else {
+      // else use the one for the group
+      npc.setTexture(this.npcConfig.knownTexture);
+      if (this.scene.anims.exists(this.npcConfig.knownTexture)) {
+        npc.play(this.npcConfig.knownTexture);
+      }
     }
   }
 
   tmpReveal(npc: Phaser.Physics.Arcade.Sprite) {
     if (!this.npcConfig.known) {
       npc.stop();
-      npc.setTexture(this.npcConfig.knownTexture);
-      if (this.scene.anims.exists(this.npcConfig.knownTexture)) {
-        npc.play(this.npcConfig.knownTexture);
+      if (npc['knownTexture']) {
+        // if child has knownTexture use this
+        npc.setTexture(npc['knownTexture']);
+        if (this.scene.anims.exists(npc['knownTexture'])) {
+          npc.play(npc['knownTexture']);
+        }
+      } else {
+        // else use the one for the group
+        npc.setTexture(this.npcConfig.knownTexture);
+        if (this.scene.anims.exists(this.npcConfig.knownTexture)) {
+          npc.play(this.npcConfig.knownTexture);
+        }
       }
     }
     this.scene.time.addEvent({
@@ -151,6 +174,26 @@ export default class NPCGroup extends Phaser.Physics.Arcade.Group {
         npc.play(TEXTURES.UNKNOWN);
       },
       loop: false,
+    });
+  }
+
+  setDifferentTextures(aTextures = []) {
+    this.getChildren().forEach((child: Phaser.Physics.Arcade.Sprite, index) => {
+      if (aTextures[index]) {
+        child.stop();
+        child.setTexture(aTextures[index]);
+        if (this.scene.anims.exists(aTextures[index])) {
+          child.play(aTextures[index]);
+        }
+      }
+    });
+  }
+
+  setDifferentKnownTextures(aTextures = []) {
+    this.getChildren().forEach((child: Phaser.Physics.Arcade.Sprite, index) => {
+      if (aTextures[index]) {
+        child['knownTexture'] = aTextures[index];
+      }
     });
   }
 

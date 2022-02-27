@@ -373,6 +373,11 @@ export default class SceneGame extends Phaser.Scene {
       maxQuantity: 3,
       velocity: this.velocity,
     });
+    this.photos.setDifferentKnownTextures([
+      TEXTURES.PHOTO_H,
+      TEXTURES.PHOTO_D,
+      TEXTURES.PHOTO_O,
+    ]);
   }
 
   _spawnPortal() {
