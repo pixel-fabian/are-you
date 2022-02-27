@@ -6,6 +6,8 @@
 
 ---
 
+[![Are You title image](dist/assets/img/are-you_title.jpg)](https://pixel-fabian.itch.io/are-you)
+
 ... in the attic? in the cellar? You just don't know. And what's there, in your face? And what are all those other... where? This ... what? This is not real! What are those? What are you?
 
 You need to orient yourself. You need to find out. Things are not what they seem. You should stand still, just for a bit, before trying to move.
