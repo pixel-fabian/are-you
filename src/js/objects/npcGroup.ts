@@ -14,6 +14,10 @@ type npcConfig = {
    */
   knownTexture?: string;
   /**
+   * immovable
+   */
+  knownImmovable?: boolean;
+  /**
    * Textures to display when type is known
    */
   knownTextures?: Array<string>;
@@ -40,6 +44,7 @@ export default class NPCGroup extends Phaser.Physics.Arcade.Group {
     known: false,
     knownTexture: TEXTURES.UNKNOWN,
     knownMoving: false,
+    knownImmovable: false,
     minQuantity: 4,
     maxQuantity: 8,
     velocity: 100,
@@ -84,7 +89,14 @@ export default class NPCGroup extends Phaser.Physics.Arcade.Group {
       npc.setBounceX(1);
       npc.setBounceY(1);
       npc.setCollideWorldBounds(true);
-      npc.setImmovable(true);
+      if (this.npcConfig.known && !this.npcConfig.knownImmovable) {
+        npc.setImmovable(false);
+        npc.setPushable(false);
+        npc.setMaxVelocity(0);
+      } else {
+        npc.setImmovable(true);
+      }
+
       npc.setDepth(90);
       npc.revealTexture = this._revealTexture.bind(this);
       if (sTextureKey === TEXTURES.HOLE || sTextureKey === TEXTURES.UNKNOWN) {
@@ -137,6 +149,10 @@ export default class NPCGroup extends Phaser.Physics.Arcade.Group {
   _revealTexture(npc: Phaser.Physics.Arcade.Sprite) {
     npc['revealed'] = true;
     npc.stop();
+    if (!this.npcConfig.knownImmovable) {
+      npc.setImmovable(false);
+      npc.setPushable(false);
+    }
 
     if (npc['knownTexture']) {
       // if child has knownTexture use this
@@ -252,8 +268,7 @@ export default class NPCGroup extends Phaser.Physics.Arcade.Group {
   }
 
   _setFlip(velocityX, sprite) {
-  
-    if(velocityX >= 0) {
+    if (velocityX >= 0) {
       sprite.flipX = false;
     } else if (velocityX < 0) {
       sprite.flipX = true;

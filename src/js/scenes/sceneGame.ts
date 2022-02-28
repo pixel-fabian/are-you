@@ -321,6 +321,10 @@ export default class SceneGame extends Phaser.Scene {
       null,
       this,
     );
+    this.physics.add.collider(this.books, this.ghosts);
+    this.physics.add.collider(this.books, this.holes);
+    this.physics.add.collider(this.books, this.oldones);
+    this.physics.add.collider(this.books, this.photos);
   }
 
   _spawnHoles() {
@@ -347,6 +351,7 @@ export default class SceneGame extends Phaser.Scene {
       knownTexture: TEXTURES.BOOKS,
       knownMoving: false,
       velocity: this.velocity,
+      knownImmovable: false,
     });
   }
 
