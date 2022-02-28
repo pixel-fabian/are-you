@@ -1,6 +1,11 @@
+@font-face {
+  font-family: BitPotion;
+  src: url('../assets/fonts/BitPotion.ttf');
+}
+
 body {
   background: #333;
-  font-family: sans-serif;
+  font-family: 'BitPotion', sans-serif;
   margin: 0;
 }
 
