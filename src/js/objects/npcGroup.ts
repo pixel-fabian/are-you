@@ -99,6 +99,7 @@ export default class NPCGroup extends Phaser.Physics.Arcade.Group {
         // move towards random direction
         const { velocityX, velocityY } = this._getRandomDirection();
         npc.setVelocity(velocityX, velocityY);
+        this._setFlip(velocityX, npc);
         // change direction sometimes
         const nDelay = Phaser.Math.Between(100, 3000);
         npc.changeDirectionEvent = scene.time.addEvent({
@@ -107,6 +108,7 @@ export default class NPCGroup extends Phaser.Physics.Arcade.Group {
             const { velocityX, velocityY } = this._getRandomDirection();
             if (npc.body) {
               npc.setVelocity(velocityX, velocityY);
+              this._setFlip(velocityX, npc);
             }
           },
           loop: true,
@@ -246,6 +248,15 @@ export default class NPCGroup extends Phaser.Physics.Arcade.Group {
           velocityX: this.npcConfig.velocity,
           velocityY: -this.npcConfig.velocity,
         };
+    }
+  }
+
+  _setFlip(velocityX, sprite) {
+  
+    if(velocityX >= 0) {
+      sprite.flipX = false;
+    } else if (velocityX < 0) {
+      sprite.flipX = true;
     }
   }
 

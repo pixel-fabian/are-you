@@ -165,8 +165,10 @@ export default class SceneGame extends Phaser.Scene {
     if (!this.pauseMovement) {
       if (this.keyA.isDown) {
         this.player.setVelocityX(-this.velocity);
+        this.player.flipX = true;
       } else if (this.keyD.isDown) {
         this.player.setVelocityX(this.velocity);
+        this.player.flipX = false;
       }
       if (this.keyW.isDown) {
         this.player.setVelocityY(-this.velocity);
