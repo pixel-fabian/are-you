@@ -87,9 +87,7 @@ export default class NPCGroup extends Phaser.Physics.Arcade.Group {
       npc.setImmovable(true);
       npc.setDepth(90);
       npc.revealTexture = this._revealTexture.bind(this);
-      if (sTextureKey === TEXTURES.HOLE || sTextureKey === TEXTURES.UNKNOWN) {
-        npc.setCircle(14, 2, 2);
-      }
+      npc.setCircle(14, 2, 2);
       // if unkown, or known and knownMoving=true: Move around
       if (
         !this.npcConfig.known ||
