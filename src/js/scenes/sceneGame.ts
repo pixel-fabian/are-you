@@ -163,18 +163,22 @@ export default class SceneGame extends Phaser.Scene {
     this.player.setVelocity(0);
 
     if (!this.pauseMovement) {
+      // player movement as vector to ensure same speed diagonally
+      const playerDirection = new Phaser.Math.Vector2(0, 0);
       if (this.keyA.isDown) {
-        this.player.setVelocityX(-this.velocity);
+        playerDirection.x -= 1;
         this.player.flipX = true;
       } else if (this.keyD.isDown) {
-        this.player.setVelocityX(this.velocity);
+        playerDirection.x += 1;
         this.player.flipX = false;
       }
       if (this.keyW.isDown) {
-        this.player.setVelocityY(-this.velocity);
+        playerDirection.y -= 1;
       } else if (this.keyS.isDown) {
-        this.player.setVelocityY(this.velocity);
+        playerDirection.y += 1;
       }
+      playerDirection.setLength(this.velocity);
+      this.player.setVelocity(playerDirection.x, playerDirection.y);
     }
   }
 

@@ -90,25 +90,25 @@ export default class NPCGroup extends Phaser.Physics.Arcade.Group {
       if (sTextureKey === TEXTURES.HOLE || sTextureKey === TEXTURES.UNKNOWN) {
         npc.setCircle(14, 2, 2);
       }
-      // if unkown or known and knownMoving=true: Move around
+      // if unkown, or known and knownMoving=true: Move around
       if (
         !this.npcConfig.known ||
         (this.npcConfig.known && this.npcConfig.knownMoving)
       ) {
         npc.play(sTextureKey);
         // move towards random direction
-        const { velocityX, velocityY } = this._getRandomDirection();
-        npc.setVelocity(velocityX, velocityY);
-        this._setFlip(velocityX, npc);
+        const vDirection = this._getRandomDirection();
+        npc.setVelocity(vDirection.x, vDirection.y);
+        this._setFlip(vDirection.x, npc);
         // change direction sometimes
         const nDelay = Phaser.Math.Between(100, 3000);
         npc.changeDirectionEvent = scene.time.addEvent({
           delay: nDelay,
           callback: () => {
-            const { velocityX, velocityY } = this._getRandomDirection();
+            const vDirection = this._getRandomDirection();
             if (npc.body) {
-              npc.setVelocity(velocityX, velocityY);
-              this._setFlip(velocityX, npc);
+              npc.setVelocity(vDirection.x, vDirection.y);
+              this._setFlip(vDirection.x, npc);
             }
           },
           loop: true,
@@ -206,54 +206,67 @@ export default class NPCGroup extends Phaser.Physics.Arcade.Group {
   // Private methods                              //
   //////////////////////////////////////////////////
 
+  /**
+   * Get a random direction
+   * @returns Phaser.Math.Vector2
+   */
   _getRandomDirection() {
     const nDirection = Phaser.Math.Between(0, 8);
+    // movement as vector to ensure same speed diagonally
+    const vDirection = new Phaser.Math.Vector2(0, 0);
+
     switch (nDirection) {
-      case 0:
-        // stand still
-        return { velocityX: 0, velocityY: 0 };
       case 1:
         // right
-        return { velocityX: this.npcConfig.velocity, velocityY: 0 };
+        vDirection.x += 1;
+        vDirection.y = 0;
+        break;
       case 2:
         // right-down
-        return {
-          velocityX: this.npcConfig.velocity,
-          velocityY: this.npcConfig.velocity,
-        };
+        vDirection.x += 1;
+        vDirection.y += 1;
+        break;
       case 3:
         // down
-        return { velocityX: 0, velocityY: this.npcConfig.velocity };
+        vDirection.x = 0;
+        vDirection.y += 1;
+        break;
       case 4:
         // down-left
-        return {
-          velocityX: -this.npcConfig.velocity,
-          velocityY: this.npcConfig.velocity,
-        };
+        vDirection.x -= 1;
+        vDirection.y += 1;
+        break;
       case 5:
         // left
-        return { velocityX: -this.npcConfig.velocity, velocityY: 0 };
+        vDirection.x -= 1;
+        vDirection.y = 0;
+        break;
       case 6:
         // left-up
-        return {
-          velocityX: -this.npcConfig.velocity,
-          velocityY: -this.npcConfig.velocity,
-        };
+        vDirection.x -= 1;
+        vDirection.y -= 1;
+        break;
       case 7:
         // up
-        return { velocityX: 0, velocityY: -this.npcConfig.velocity };
+        vDirection.x = 0;
+        vDirection.y -= 1;
+        break;
       case 8:
         // up-right
-        return {
-          velocityX: this.npcConfig.velocity,
-          velocityY: -this.npcConfig.velocity,
-        };
+        vDirection.x += 1;
+        vDirection.y -= 1;
+        break;
+      default:
+        // stand still
+        vDirection.x = 0;
+        vDirection.y = 0;
+        break;
     }
+    return vDirection.setLength(this.npcConfig.velocity);
   }
 
   _setFlip(velocityX, sprite) {
-  
-    if(velocityX >= 0) {
+    if (velocityX >= 0) {
       sprite.flipX = false;
     } else if (velocityX < 0) {
       sprite.flipX = true;
