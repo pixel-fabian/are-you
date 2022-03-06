@@ -6,6 +6,7 @@ enum SCENES {
   COLLECTION = 'sceneCollection',
   CREDITS = 'sceneCredits',
   WINNING = 'sceneWinning',
+  SETTINGS = 'sceneSettings',
 }
 
 export default SCENES;

@@ -5,6 +5,7 @@ import SceneGame from './scenes/sceneGame';
 import SceneCollection from './scenes/sceneCollection';
 import SceneCredits from './scenes/sceneCredits';
 import SceneWinning from './scenes/sceneWinning';
+import SceneSettings from './scenes/sceneSettings';
 
 const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO, // WebGL if available
@@ -19,6 +20,7 @@ const config: Phaser.Types.Core.GameConfig = {
     SceneCollection,
     SceneCredits,
     SceneWinning,
+    SceneSettings,
   ],
   render: {
     pixelArt: true,
