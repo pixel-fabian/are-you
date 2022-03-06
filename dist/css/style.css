@@ -20,3 +20,33 @@ body {
   max-width: 100%;
   border: 2px solid #595757;
 }
+
+/*************************************
+Game in standalone HTML (not embedded)
+*************************************/
+
+.standalone {
+  background-image: url('../assets/img/background.png');
+  background-repeat: repeat;
+}
+
+.standalone .wrapper {
+  background-color: #3f2832;
+  color: #fff;
+}
+
+.standalone .title-img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 100%;
+  margin-bottom: 20px;
+}
+
+.standalone h1 {
+  font-size: 4em;
+}
+
+.standalone p {
+  font-size: 2em;
+}

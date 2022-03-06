@@ -33,6 +33,11 @@ Build with [phaser 3](https://phaser.io/)
 - Find the clover, u will need luck!
 - Collect all 3 photos to uncover who you are.
 
+## Edit or play localy
+
+1. Clone or download this repository
+2. Open `dist/index_standalone.html` with a webserver
+
 ## License
 
 ### Code
@@ -55,5 +60,5 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 ### Assets
 
-- Sprites and sound effects: CC-BY-SA 4.0
+- Sprites and sound effects: pixel-fabian & lupercalia CC-BY-SA 4.0
 - Font: BitPotion by Joeb Rogers (CC-BY)
