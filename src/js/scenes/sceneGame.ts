@@ -7,6 +7,7 @@ import Player from '../objects/player';
 import NPCGroup from '../objects/npcGroup';
 import Chest from '../objects/chest';
 import Item from '../objects/item';
+import SaveGame from '../objects/saveGame';
 
 export default class SceneGame extends Phaser.Scene {
   private keyW: Phaser.Input.Keyboard.Key;
@@ -37,6 +38,7 @@ export default class SceneGame extends Phaser.Scene {
   private collision: boolean;
   private pickup: boolean = false;
   private buttonContinue;
+  private saveGame: SaveGame;
   private knownElements = {
     books: false,
     ghosts: false,
@@ -56,6 +58,8 @@ export default class SceneGame extends Phaser.Scene {
   //////////////////////////////////////////////////
 
   init(data): void {
+    this.saveGame = new SaveGame();
+
     // soft reset to continue game
     this.pauseMovement = false;
     this.collision = false;
@@ -314,7 +318,7 @@ export default class SceneGame extends Phaser.Scene {
     this.physics.add.collider(
       this.player,
       this.items,
-      this._onCollisionPlayerItem,
+      this._onCollisionPlayerClover,
       null,
       this,
     );
@@ -391,6 +395,7 @@ export default class SceneGame extends Phaser.Scene {
       null,
       this,
     );
+    this.saveGame.addItem('portal');
   }
 
   _spawnChests(nQuantity, sItem) {
@@ -435,6 +440,7 @@ export default class SceneGame extends Phaser.Scene {
     this._takeDamage(ghost);
     if (!this.knownElements.ghosts) {
       this.knownElements.ghosts = true;
+      this.saveGame.addItem('ghost');
       this._zoomEffect(ghost);
     }
   }
@@ -453,6 +459,7 @@ export default class SceneGame extends Phaser.Scene {
     this.collision = true;
     if (!this.knownElements.holes) {
       this.knownElements.holes = true;
+      this.saveGame.addItem('hole');
       this._takeDamage(hole);
       this._zoomEffect(hole);
     } else {
@@ -475,6 +482,7 @@ export default class SceneGame extends Phaser.Scene {
     this._takeDamage(oldone);
     if (!this.knownElements.oldones) {
       this.knownElements.oldones = true;
+      this.saveGame.addItem('oldone');
       this._zoomEffect(oldone);
     }
   }
@@ -493,6 +501,7 @@ export default class SceneGame extends Phaser.Scene {
     if (!this.knownElements.books) {
       this.collision = true;
       this.knownElements.books = true;
+      this.saveGame.addItem('books');
       this._zoomEffect(book);
     }
   }
@@ -509,6 +518,7 @@ export default class SceneGame extends Phaser.Scene {
       return;
     // collision is happening:
     this.photosCollected++;
+    this.saveGame.addItem(`photo_d`);
     this.textPhotos.text = `Photos: ${this.photosCollected}/3`;
     this._zoomEffect(photo, true);
   }
@@ -521,12 +531,14 @@ export default class SceneGame extends Phaser.Scene {
   }
 
   _onCollisionPlayerPortal() {
+    this.saveGame.addItem(this.player.texture);
     this.scene.start(SCENES.WINNING);
   }
 
-  _onCollisionPlayerItem(player, item) {
+  _onCollisionPlayerClover(player, clover) {
     player.setPower(TEXTURES.CLOVER);
-    this._pickupItem(item);
+    this.saveGame.addItem('clover');
+    this._pickupItem(clover);
   }
 
   _pickupItem(item) {
@@ -617,8 +629,10 @@ export default class SceneGame extends Phaser.Scene {
               this._pickupItem(element);
               if (this.photosCollected == 1) {
                 this.player.changeTexture(1);
+                this.saveGame.addItem(this.player.texture);
               } else if (this.photosCollected == 2) {
                 this.player.changeTexture(2);
+                this.saveGame.addItem(this.player.texture);
               } else if (this.photosCollected == 3) {
                 this.player.changeTexture(3);
                 this._spawnPortal();
