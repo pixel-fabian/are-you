@@ -531,7 +531,7 @@ export default class SceneGame extends Phaser.Scene {
   }
 
   _onCollisionPlayerPortal() {
-    this.saveGame.addItem(this.player.texture);
+    this.saveGame.addItem('player_3');
     this.scene.start(SCENES.WINNING);
   }
 
@@ -629,10 +629,10 @@ export default class SceneGame extends Phaser.Scene {
               this._pickupItem(element);
               if (this.photosCollected == 1) {
                 this.player.changeTexture(1);
-                this.saveGame.addItem(this.player.texture);
+                this.saveGame.addItem('player_1');
               } else if (this.photosCollected == 2) {
                 this.player.changeTexture(2);
-                this.saveGame.addItem(this.player.texture);
+                this.saveGame.addItem('player_2');
               } else if (this.photosCollected == 3) {
                 this.player.changeTexture(3);
                 this._spawnPortal();
