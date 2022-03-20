@@ -6,6 +6,7 @@ enum TEXTURES {
   CLOVER = 'clover',
   FLOOR = 'floor',
   GHOST = 'ghost',
+  HEART = 'heart',
   HOLE = 'hole',
   OLDONE = 'oldone',
   PHOTO_D = 'photo_deepone',
