@@ -69,6 +69,10 @@ export default class SceneLoad extends Phaser.Scene {
       frameWidth: 32,
       frameHeight: 32,
     });
+    this.load.spritesheet(TEXTURES.HEART, 'assets/sprites/spr_heart.png', {
+      frameWidth: 32,
+      frameHeight: 32,
+    });
     this._createUnknownSprite();
     this._createPlayerSprites();
     // load images
@@ -81,7 +85,6 @@ export default class SceneLoad extends Phaser.Scene {
     this.load.image(TEXTURES.CLOVER, 'assets/sprites/spr_clover.png');
     this.load.image(TEXTURES.FLOOR, 'assets/sprites/spr_floor.png');
     this.load.image(TEXTURES.HOLE, 'assets/sprites/spr_hole.png');
-    this.load.image(TEXTURES.HEART, 'assets/sprites/spr_heart.png');
     // load audio
     this.load.audio(AUDIO.DEATH, ['assets/sfx/death.wav']);
     this.load.audio(AUDIO.OPEN, ['assets/sfx/open.wav']);
@@ -176,3 +179,4 @@ export default class SceneLoad extends Phaser.Scene {
     }
   }
 }
+

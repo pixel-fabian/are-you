@@ -28,12 +28,12 @@ export default class SceneGame extends Phaser.Scene {
   private photos?: NPCGroup;
   private chests: Chest[] = [];
   private items: Item[] = [];
+  private lifeSprites = [];
   private portal?: Phaser.Physics.Arcade.Sprite;
   private soundDeath?: Phaser.Sound.BaseSound;
   private soundPickup?: Phaser.Sound.BaseSound;
   private soundTakedamage?: Phaser.Sound.BaseSound;
   private textAreYou?: Phaser.GameObjects.Text;
-  private textLifes?: Phaser.GameObjects.Text;
   private textPhotos?: Phaser.GameObjects.Text;
   private collision: boolean;
   private pickup: boolean = false;
@@ -99,13 +99,14 @@ export default class SceneGame extends Phaser.Scene {
     this.player.setCircle(14, 2, 2);
 
     this._addCollider();
-    this.textLifes = this.add.text(10, 0, `Lifes: ${this.lifes}`, {
+    this.add.text(10, 0, `Lifes:`, {
       fontFamily: 'BitPotion',
       color: '#fff',
       fontSize: '28px',
     });
+    this._displayLifes();
     this.textPhotos = this.add.text(
-      100,
+      150,
       0,
       `Photos: ${this.photosCollected}/3`,
       {
@@ -530,6 +531,17 @@ export default class SceneGame extends Phaser.Scene {
     }
   }
 
+  _displayLifes() {
+    this.lifeSprites.forEach((sprite: Phaser.GameObjects.Sprite) => {
+      sprite.destroy();
+    });
+    let x = 70;
+    for (let index = 0; index < this.lifes; index++) {
+      this.lifeSprites.push(this.add.sprite(x, 22, TEXTURES.HEART));
+      x += 25;
+    }
+  }
+
   _onCollisionPlayerPortal() {
     this.saveGame.addItem('player_3');
     this.scene.start(SCENES.WINNING);
@@ -664,7 +676,7 @@ export default class SceneGame extends Phaser.Scene {
   _takeDamage(element, nDamage = 1) {
     this.soundTakedamage.play();
     this.lifes = this.lifes - nDamage;
-    this.textLifes.text = `Lifes: ${this.lifes}`;
+    this._displayLifes();
     if (this.lifes <= 0) {
       this._zoomEffect(element);
     } else {
@@ -718,3 +730,4 @@ export default class SceneGame extends Phaser.Scene {
     return this.holes;
   }
 }
+
